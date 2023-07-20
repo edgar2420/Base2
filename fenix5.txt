@@ -1,0 +1,356 @@
+CREATE TABLE cliente (
+id INT NOT NULL PRIMARY KEY,
+nombre VARCHAR(100) NOT NULL,
+apellido VARCHAR(100) NOT NULL,
+telefono INT,
+correo VARCHAR(50) NOT NULL,
+contraseña VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE repartidor (
+ci_id INT NOT NULL PRIMARY KEY,
+nombre VARCHAR(100) NOT NULL,
+apellido VARCHAR(100) NOT NULL,
+telefono INT,
+dtNacimiento DATE NOT NULL
+);
+
+
+CREATE TABLE estadoPedido(
+estado_id INT NOT NULL PRIMARY KEY,
+id_pedido INT,
+snombre VARCHAR (20),
+fecha DATE NOT NULL
+);
+
+CREATE TABLE ubicacion(
+	ubicacion_id SERIAL PRIMARY KEY,
+	calle VARCHAR(100) NOT NULL,
+	nro_casa INT NOT NULL,
+    id_cliente INT,
+FOREIGN KEY (id_cliente) REFERENCES cliente(id)
+);
+
+CREATE TABLE pedidos (
+numero SERIAL PRIMARY KEY not null,
+id_cliente INT,
+ci_repartidor INT,
+fecha VARCHAR(10) NOT NULL,
+total DECIMAL (8,2 )NOT NULL
+);
+
+SELECT * FROM pedidos;
+SELECT * FROM detallePedido;
+
+INSERT INTO cliente VALUES(645676, 'Jeison', 'Galbis', 76789865, 'jeison1@gmail.com', 'dimiz');
+INSERT INTO repartidor values(1, 'Pedro', 'Gomez', '76567898', '21/11/2000');
+
+
+CREATE TABLE restaurante (
+nombre VARCHAR(30) NOT NULL PRIMARY KEY,
+ubicacion VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE productos(
+producto_id SERIAL NOT NULL PRIMARY KEY,
+n_restaurante VARCHAR (20),
+precio DECIMAL(8,2) NOT NULL,
+nombre VARCHAR(40) NOT NULL,
+tipo VARCHAR(15) NOT NULL,
+UNIQUE(producto_id, n_restaurante)
+);
+
+
+CREATE TABLE detallePedido(
+detalle_id SERIAL PRIMARY KEY,
+id_pedido INT,
+id_producto INT,
+cantidad INT,
+precioUnitario DECIMAL(8,2),
+UNIQUE(detalle_id, id_pedido, id_producto)
+);
+
+CREATE TABLE repartidor_logs(
+log_id SERIAL NOT NULL PRIMARY KEY,
+dtOperacion date,
+ci_id INT,
+nombre VARCHAR(30) NOT NULL,
+apellido VARCHAR(30) NOT NULL
+);
+
+ALTER TABLE pedidos
+  ADD CONSTRAINT FK_pedidos_id_cliente
+  FOREIGN KEY (id_cliente)
+  REFERENCES cliente (id);
+  
+  ALTER TABLE pedidos
+  ADD CONSTRAINT FK_pedidos_ci_repartidor
+  FOREIGN KEY (ci_repartidor)
+  REFERENCES repartidor (ci_id);
+
+  ALTER TABLE estadoPedido
+  ADD CONSTRAINT FK_estadoPedido_id_pedido
+  FOREIGN KEY (id_pedido)
+  REFERENCES pedidos (numero);
+
+ALTER TABLE productos ADD FOREIGN KEY (n_restaurante) REFERENCES restaurante (nombre);
+
+ALTER TABLE detallePedido ADD FOREIGN KEY (id_pedido) REFERENCES pedidos (numero);
+ALTER TABLE detallePedido ADD FOREIGN KEY (id_producto) REFERENCES productos (producto_id);
+
+
+CREATE EXTENSION pgcrypto;
+
+
+--INSERTAR
+
+CREATE OR REPLACE FUNCTION ins_repartidor(
+e_ci_id INT,
+e_nombre TEXT,
+e_apellido TEXT,
+e_telefono INT,
+e_dtNacimiento DATE
+) RETURNS void AS
+$BODY$
+BEGIN
+
+	IF EXISTS(SELECT * FROM repartidor WHERE ci_id = e_ci_id) THEN
+	update repartidor set nombre = e_nombre,
+	apellido = e_apellido, telefono = e_telefono, dtNacimeinto = e_dtNacimiento where ci_id = e_ci_id;
+	
+	elsif NOT EXISTS(SELECT * FROM repartidor WHERE ci_id = e_ci_id) THEN
+		INSERT INTO repartidor VALUES(e_ci_id,
+		e_nombre, e_apellido, e_telefono, e_dtNacimiento);
+	END IF;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+ALTER TABLE repartidor
+ADD CONSTRAINT check_fecha CHECK (date_part('year',age(dtNacimiento))>=18);
+
+
+--TRIGGERS
+
+CREATE OR REPLACE FUNCTION logger_repartidor()
+RETURNS TRIGGER AS
+$$
+BEGIN
+
+	IF TG_OP = 'INSERT' THEN
+		INSERT INTO repartidor_logs VALUES(DEFAULT, current_timestamp, NEW.ci_id, NEW.nombre, NEW.apellido);
+	ELSIF TG_OP = 'UPDATE' THEN
+		INSERT INTO repartidor_logs VALUES(DEFAULT, current_timestamp, NEW.ci_id, NEW.nombre, NEW.apellido);
+	END IF;
+RETURN OLD;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION ins_cliente(
+c_id INT,
+c_nombre VARCHAR(30),
+c_apellido VARCHAR(30),
+c_telefono INT,
+c_correo VARCHAR(40),
+c_contraseña text
+) RETURNS void AS
+$BODY$
+BEGIN
+
+	IF EXISTS(SELECT * FROM cliente WHERE id = c_id) THEN
+		update cliente set contraseña = crypt(c_contraseña, gen_salt('bf')), nombre = c_nombre,
+			apellido = c_apellido, telefono = c_telefono, correo = c_correo where id = c_id;
+	
+	elsif NOT EXISTS(SELECT * FROM cliente WHERE id = c_id) THEN
+		INSERT INTO cliente VALUES(c_id, c_nombre, c_apellido, c_telefono, c_correo, 
+								   crypt(c_contraseña, gen_salt('bf')));
+	END IF;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+
+--VERIFICACIONES
+
+CREATE OR REPLACE FUNCTION verificarCliente()
+RETURNS TEXT AS
+$$
+BEGIN
+
+	IF EXISTS (SELECT *FROM cliente WHERE id = $1 AND contraseña = crypt($2, contraseña)) THEN
+		RETURN 'Sesion iniciada correctamente';
+	ELSE
+		RAISE EXCEPTION 'Usuario y/o Contraseña incorrectos';
+	END IF;
+END
+$$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION verificarRepartidor()
+RETURNS TEXT AS
+$$
+BEGIN
+
+	IF EXISTS (SELECT *FROM repartidor WHERE usuario = $1 AND contraseña = crypt($2, contraseña)) THEN
+		RETURN 'Sesion iniciada correctamente';
+	ELSE
+		RAISE EXCEPTION 'Usuario y/o Contraseña incorrectos';
+	END IF;
+END
+$$
+LANGUAGE plpgsql;
+
+
+--Validacion de cliente
+
+CREATE OR REPLACE FUNCTION validar_cliente()
+RETURNS TRIGGER AS
+$$
+BEGIN
+
+	IF NEW.id IS NULL THEN
+	RAISE EXCEPTION 'El id no puede ser nulo';
+	END IF;
+	IF NEW.nombre !~* '^([A-Z]{1}[a-zñáéíóúÑÁÉÍÓÚ]+[\s]*)+$' THEN
+	RAISE EXCEPTION 'Solo se pueden introducir letras en este campo';
+	END IF;
+	IF NEW.apellido !~* '^([A-Z]{1}[a-zñáéíóúÑÁÉÍÓÚ]+[\s]*)+$' THEN
+	RAISE EXCEPTION 'Solo se pueden introducir letras en este campo';
+	END IF;
+	IF NEW.telefono IS NULL THEN
+	RAISE EXCEPTION 'El telefono no puede ser nulo';
+	END IF;
+	
+RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+CREATE TRIGGER validar_cliente
+	BEFORE INSERT OR UPDATE ON cliente
+	FOR EACH ROW
+	EXECUTE PROCEDURE validar_cliente();
+	
+	
+--Validacion de empleado
+
+CREATE OR REPLACE FUNCTION validar_repartidor()
+RETURNS TRIGGER AS
+$$
+BEGIN
+
+	IF NEW.ci_id IS NULL THEN
+	RAISE EXCEPTION 'El ci no puede ser nulo';
+	END IF;
+	IF NEW.nombre !~* '^([A-Z]{1}[a-zñáéíóúÑÁÉÍÓÚ]+[\s]*)+$' THEN
+	RAISE EXCEPTION 'Solo se pueden introducir letras en este campo';
+	END IF;
+	IF NEW.apellido !~* '^([A-Z]{1}[a-zñáéíóúÑÁÉÍÓÚ]+[\s]*)+$' THEN
+	RAISE EXCEPTION 'Solo se pueden introducir letras en este campo';
+	END IF;
+	IF NEW.telefono IS NULL THEN
+	RAISE EXCEPTION 'El telefono no puede ser nulo';
+	END IF;
+	
+RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+CREATE TRIGGER validar_repartidor
+	BEFORE INSERT OR UPDATE ON repartidor
+	FOR EACH ROW
+	EXECUTE PROCEDURE validar_repartidor();
+	
+	
+--INSERTAR PRODUCTOS Y RESTAURANTES
+
+CREATE OR REPLACE FUNCTION ins_restaurante(
+	p_nombre varchar,
+	p_ubicacion varchar
+	) RETURNS void AS
+$BODY$
+BEGIN
+	INSERT INTO restaurante VALUES (p_nombre, p_ubicacion);
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+
+SELECT ins_restaurante ('Pollo el Solar', 'Av. Cañoto 637');
+SELECT ins_restaurante ('Pollos Chuy', 'Calle Ayacucho ');
+SELECT ins_restaurante ('Pollos Campeon', 'Av. Cañoto');
+SELECT ins_restaurante ('Pizza Río', 'Av. Busch sobre el 3er anillo');
+SELECT ins_restaurante ('Texas Burger', '24 de Septiembre 431');
+SELECT ins_restaurante ('Hamburguesas Toby', 'Calle Ayacucho');
+SELECT ins_restaurante ('La Mala Pizzeria', 'Av. 3 de Mayo');
+SELECT ins_restaurante ('El Arriero', 'Av. San Martin');
+
+
+INSERT INTO productos VALUES (DEFAULT, 'Pollo el Solar', 28, '1/4 Pollo broasted', 'Pollo');
+INSERT INTO productos VALUES (DEFAULT, 'Pollo el Solar', 33, '1/2 Chicharrón de pollo (8 piezas)', 'Pollo');
+INSERT INTO productos VALUES (DEFAULT, 'Pollo el Solar', 60, 'Chicharrón de pollo (16 piezas)', 'Pollo');
+INSERT INTO productos VALUES (DEFAULT, 'Pollo el Solar', 20, 'Coca Cola 2 L', 'Bebidas');
+INSERT INTO productos VALUES (DEFAULT, 'Pollo el Solar', 9, 'Coca Cola 500 ml', 'Bebidas');
+
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Chuy', 31, 'Hamburguesa de pollo "La Adulada"', 'Pollo');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Chuy', 26, 'Cuarto de pollo', 'Pollo');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Chuy', 26, 'Milanesa picada', 'Milanesa');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Chuy', 22, 'Pollo económico Broasted', 'Pollo');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Chuy', 13, 'Ensalada Rusa', 'Ensalada');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Chuy', 19, 'Coca Cola 2 L', 'Bebidas');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Chuy', 10, 'Coca Cola 500 ml', 'Bebidas');
+
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Campeon', 96, 'Pollo entero a la brasa', 'Pollo');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Campeon', 24, '1/4 Pollo a la broaster', 'Pollo');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Campeon', 26, '1/4 pollo a las brasas', 'Pollo');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Campeon', 22, 'Lasaña de pollo', 'Pollo');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Campeon', 15, 'Soda Aquario 2 L', 'Bebidas');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Campeon', 15, 'Soda 2 L', 'Bebidas');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Campeon', 13, 'Agua Vital 2 L', 'Bebidas');
+INSERT INTO productos VALUES (DEFAULT, 'Pollos Campeon', 8, 'Agua Vital 500 ml', 'Bebidas');
+
+INSERT INTO productos VALUES (DEFAULT, 'Pizza Río', 39, 'Pizza 4 Estaciones', 'Pizza');
+INSERT INTO productos VALUES (DEFAULT, 'Pizza Río', 46, 'Pizza 4 Quesos', 'Pizza');
+INSERT INTO productos VALUES (DEFAULT, 'Pizza Río', 41, 'Pizza Barbacoa', 'Pizza');
+INSERT INTO productos VALUES (DEFAULT, 'Pizza Río', 41, 'Pizza Hawaiana', 'Pizza');
+INSERT INTO productos VALUES (DEFAULT, 'Pizza Río', 15, 'Coca Cola 2L', 'Bebidas');
+INSERT INTO productos VALUES (DEFAULT, 'Pizza Río', 15, 'Fanta 2L', 'Bebidas');
+
+INSERT INTO productos VALUES (DEFAULT, 'Texas Burger', 20, 'Texas clásica', 'Hamburguesa');
+INSERT INTO productos VALUES (DEFAULT, 'Texas Burger', 25, 'Texas bacon', 'Hamburguesa');
+INSERT INTO productos VALUES (DEFAULT, 'Texas Burger', 25, 'Texas egg', 'Hamburguesa');
+INSERT INTO productos VALUES (DEFAULT, 'Texas Burger', 35, 'Texas', 'Hamburguesa');
+INSERT INTO productos VALUES (DEFAULT, 'Texas Burger', 7, 'Coca Cola 500 ml', 'Bebidas');
+INSERT INTO productos VALUES (DEFAULT, 'Texas Burger', 15, 'Coca Cola 2 L', 'Bebidas');
+
+INSERT INTO productos VALUES (DEFAULT, 'Hamburguesas Toby', 28, 'Toby clásica', 'Hamburguesa');
+INSERT INTO productos VALUES (DEFAULT, 'Hamburguesas Toby', 28, 'Toby con huevo', 'Hamburguesa');
+INSERT INTO productos VALUES (DEFAULT, 'Hamburguesas Toby', 28, 'Try Toby', 'Hamburguesa');
+INSERT INTO productos VALUES (DEFAULT, 'Hamburguesas Toby', 33, 'Doble Toby', 'Hamburguesa');
+INSERT INTO productos VALUES (DEFAULT, 'Hamburguesas Toby', 10, 'Gaseosa 500 ml', 'Bebidas');
+INSERT INTO productos VALUES (DEFAULT, 'Hamburguesas Toby', 7.50, 'Agua mineral 600 ml', 'Bebidas');
+
+INSERT INTO productos VALUES (DEFAULT, 'La Mala Pizzeria', 60, 'Chicka', 'Pizza');
+INSERT INTO productos VALUES (DEFAULT, 'La Mala Pizzeria', 60, 'Inamorata', 'Pizza');
+INSERT INTO productos VALUES (DEFAULT, 'La Mala Pizzeria', 60, 'La Mala', 'Pizza');
+INSERT INTO productos VALUES (DEFAULT, 'La Mala Pizzeria', 50, 'Pepperoni', 'Pizza');
+INSERT INTO productos VALUES (DEFAULT, 'La Mala Pizzeria', 10, 'Coca Cola 500 ml', 'Bebidas');
+INSERT INTO productos VALUES (DEFAULT, 'La Mala Pizzeria', 10, 'Sprite 500 ml', 'Bebidas');
+INSERT INTO productos VALUES (DEFAULT, 'La Mala Pizzeria', 16, 'Coca-Cola 2 L', 'Bebidas');
+INSERT INTO productos VALUES (DEFAULT, 'La Mala Pizzeria', 16, 'Sprite 2 L', 'Bebidas');
+
+INSERT INTO productos VALUES (DEFAULT, 'El Arriero', 98, 'Trucha salmonada a la parrilla', 'Pescado');
+INSERT INTO productos VALUES (DEFAULT, 'El Arriero', 130, 'Filet de salmón a la parrilla', 'Pescado');
+INSERT INTO productos VALUES (DEFAULT, 'El Arriero', 138, 'Asado de tira', 'Cortes');
+INSERT INTO productos VALUES (DEFAULT, 'El Arriero', 266, 'Colita de cuadril', 'Cortes');
+INSERT INTO productos VALUES (DEFAULT, 'El Arriero', 122, 'Churrasco de filet', 'Cortes');
+INSERT INTO productos VALUES (DEFAULT, 'El Arriero', 26, 'Brownie con helado', 'Postres');
+INSERT INTO productos VALUES (DEFAULT, 'El Arriero', 26, 'Pie de limón', 'Postres');
+INSERT INTO productos VALUES (DEFAULT, 'El Arriero', 12, 'Coca-Cola 500 ml', 'Bebidas');
+INSERT INTO productos VALUES (DEFAULT, 'El Arriero', 15, 'Agua mineral', 'Bebidas');
