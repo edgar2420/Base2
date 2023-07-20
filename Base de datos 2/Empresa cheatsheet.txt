@@ -1,0 +1,50 @@
+CREATE DATABASE empresa;
+USE empresa;
+CREATE TABLE empleados (
+    ci_id INT ,
+    nombre VARCHAR(20) NOT NULL,
+    appaterno VARCHAR(30) NOT NULL,
+    apmaterno VARCHAR(30),
+    dtNacimiento DATE NOT NULL,
+    salario DECIMAL(8,2),
+    direccion VARCHAR(150),
+    sexo VARCHAR(1) NOT NULL,
+    dpto_id INT,
+    supervisor_id INT,
+    PRIMARY KEY (ci_id)
+);
+
+CREATE TABLE familiares(
+    empleado_id INT,
+    nombre VARCHAR(45),
+    dtNacimiento DATE,
+    parentesco VARCHAR(20),
+    PRIMARY KEY (empleado_id, nombre)
+);
+
+CREATE TABLE departamentos(
+    numero_id INT PRIMARY KEY,
+    nombre VARCHAR(45),
+    admin_id INT,
+    fecha_inicio DATE
+);
+
+CREATE TABLE dpto_ubicaciones(
+    dpto_id INT,
+    ubicacion VARCHAR(45),
+    PRIMARY KEY(dpto_id, ubicacion)
+);
+
+CREATE TABLE proyectos(
+    numero_id INT PRIMARY KEY,
+    nombre VARCHAR(45),
+    ubicacion VARCHAR(45),
+    dpto_id INT
+);
+
+CREATE TABLE trabajos(
+    empleado_id INT,
+    proyecto_id INT,
+    horas INT,
+    PRIMARY KEY(empleado_id,proyecto_id)
+);

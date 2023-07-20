@@ -1,0 +1,34 @@
+-- CREATE - crear elementos
+CREATE DATABASE empresa;
+CREATE TABLE empleados (
+    ci_id INT ,
+    nombre VARCHAR(20) NOT NULL,
+    appaterno VARCHAR(30) NOT NULL,
+    apmaterno VARCHAR(30),
+    dtNacimiento DATE NOT NULL,
+    salario DECIMAL(8,2),
+    direccion VARCHAR(150),
+    sexo VARCHAR(1) NOT NULL,
+    dpto_id INT,
+    supervisor_id INT,
+    PRIMARY KEY (ci_id)
+);
+
+--USE - seleccionar
+USE empresa;
+
+--SHOW mostrar elementos
+SHOW DATABASES;
+SHOW TABLES;
+
+-- DROP - eliminar estructuras
+DROP DATABASE empresa;
+
+DROP TABLE empleados;
+
+-- DESC - ver detalle
+DESC empleados;
+
+--ALTER -> MODIFICAR TABLA
+ALTER TABLE empleados 
+ADD FOREIGN KEY(dpto_id) REFERENCES departa
