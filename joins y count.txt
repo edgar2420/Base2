@@ -1,0 +1,63 @@
+Cheatsheet - JOINS | COUNT(*)
+
+-- EXCLUIR DATOS --> NOT IN, NOT EXISTS, LEFT|RIGHT JOIN
+-- Obtener todos los empleados que trabajan en algun proyecto que NO tienen familiares
+-- con las siguientes cabeceras (CI, nombre, apellido, nombre_dpto, nombre_proyecto)
+
+-- NOT IN --> eliminar registros en base a una lista
+
+SELECT * FROM empleados WHERE ci_id NOT IN (2,4,5,7);
+
+-- empleados que no tienen familiares
+SELECT * FROM empleados
+WHERE ci_id NOT IN (SELECT empleado_id FROM familiares)
+
+select E.ci_id, CONCAT(E.snombre,' ', E.sappaterno) as empleado, P.snombre as proyecto
+from empleados E 
+Join trabajos T on E.ci_id = T.empleado_id
+JOIN proyectos P ON P.numero_id=T.proyecto_id
+WHERE E.ci_id NOT IN (SELECT empleado_id FROM familiares);
+
+--EJEMPLO NOT IN
+--  -- OBTENER TODOS LOS EMPLEADOS QUE NO TRABAJAN EN UN PROYECTO
+SELECT * FROM empleados E
+WHERE E.ci_id NOT IN (SELECT empleado_id FROM trabajos);
+
+-- NOT EXISTS
+SELECT * FROM empleados E
+WHERE NOT EXISTS (SELECT * FROM trabajos WHERE empleado_id=E.ci_id);
+
+-- JOINS
+-- INNER JOIN
+SELECT E.ci_id, CONCAT(E.snombre,' ',E.sappaterno) as empleado, E.dpto_id, D.numero_id, D.snombre as departamento
+FROM empleados E JOIN departamentos D ON E.dpto_id = D.numero_id;
+
+-- LEFT JOIN - RIGHT JOIN
+SELECT E.ci_id, CONCAT(E.snombre,' ',E.sappaterno) as empleado, E.dpto_id, D.numero_id, D.snombre as departamento
+FROM empleados E LEFT JOIN departamentos D ON E.dpto_id = D.numero_id;
+
+SELECT E.ci_id, CONCAT(E.snombre,' ',E.sappaterno) as empleado, E.dpto_id, D.numero_id, D.snombre as departamento
+FROM empleados E LEFT JOIN departamentos D ON E.dpto_id = D.numero_id
+WHERE D.numero_id IS NULL;
+
+
+-- DISTINCT - ELIMINAR DUPLICADOS
+SELECT DISTINCT empleado_id FROM trabajos order by 1 asc;
+
+-- FUNCIONES
+-- COUNT
+SELECT COUNT(*) FROM empleados;
+
+
+-- Mostrar el total de empleados por departamento ( formato: nombre_dpto, total_empleados)
+SELECT dpto_id, COUNT(*) 
+FROM empleados
+GROUP BY dpto_id;
+
+SELECT D.snombre as nombre_dpto, COUNT(*) as total_empleados
+FROM empleados E LEFT JOIN departamentos D ON E.dpto_id = D.numero_id
+GROUP BY D.numero_id;
+
+SELECT COALESCE(D.snombre,'- -ninguno- -') as nombre_dpto, COUNT(*) as total_empleados
+FROM empleados E LEFT JOIN departamentos D ON E.dpto_id = D.numero_id
+GROUP BY D.numero_id;

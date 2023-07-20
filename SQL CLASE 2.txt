@@ -1,0 +1,98 @@
+SELECT  -- que datos(columnas)
+FROM    -- donde
+WHERE   -- filtro
+
+SELECT numero_id, snombre
+FROM departamentos;
+
+SELECT ci_id, snombre, sappaterno, sdireccion, nsalario
+FROM empleados
+WHERE nsalario > 2100;
+
+-- SQL
+-- 1)Obtener el departamento de sistemas
+SELECT *
+FROM departamentos
+WHERE snombre = 'Sistemas';
+
+-- 2)obtener todas las personas 
+--    mayores de 30 años
+SELECT ci_id, snombre, sappaterno, dtnacimiento
+FROM empleados
+WHERE dtnacimiento < '1992-06-30';
+
+-- 3) obtener todas las personas
+-- que nacieron entre el 1996 y 2006
+SELECT ci_id, snombre, sappaterno, dtnacimiento
+FROM empleados
+WHERE dtnacimiento >= '1996-01-01' 
+  AND dtnacimiento < '2007-01-01';
+
+SELECT ci_id, snombre, sappaterno, dtnacimiento
+FROM empleados
+WHERE dtnacimiento BETWEEN '1996-01-01'
+ AND '2006-12-31';
+
+ -- 4) Obtener el empleado que 
+ --     apellide 'Perez'
+SELECT ci_id, snombre, sappaterno, dtnacimiento
+FROM empleados
+WHERE sappaterno = 'Perez';
+
+ -- 5) Obtener todos los empleados
+ --     que apelliden con 'P'
+
+ -- LIKE -> buscar en el texto
+ -- wildcards
+ --   - %  -> 0 a N letras
+ --   - _  -> 1 letra
+SELECT ci_id, snombre, sappaterno, dtnacimiento
+FROM empleados
+WHERE sappaterno LIKE 'P%';
+
+SELECT ci_id, snombre, sappaterno, dtnacimiento
+FROM empleados
+WHERE sappaterno LIKE '%a%';
+
+SELECT ci_id, snombre, sappaterno, dtnacimiento
+FROM empleados
+WHERE sappaterno LIKE '%a';
+
+SELECT ci_id, snombre, sappaterno, dtnacimiento
+FROM empleados
+WHERE sappaterno LIKE 'P__';
+
+SELECT ci_id, snombre, sappaterno, dtnacimiento
+FROM empleados
+WHERE sappaterno LIKE '%e_';
+
+-- 6) Obtener todos los cumpleañeros
+--     de marzo
+SELECT ci_id, snombre, sappaterno, dtnacimiento
+FROM empleados
+WHERE dtnacimiento LIKE '%-03-%';
+
+update empleados 
+set dtnacimiento= '2003-06-03'
+where ci_id=1;
+
+-- 7) Obtener el nombre y apellido
+-- de los empleados que terminan
+-- su apellido en 'r', trabajan en
+-- sistemas y tienen un salario 
+-- menor a 1000 Bs.
+SELECT snombre, sappaterno
+FROM empleados
+WHERE sappaterno LIKE '%r' 
+  AND dpto_id = 1 AND nsalario < 1000;
+
+-- 8) Mostrar ci, nombre y apellido
+-- del empleado junto al nombre del
+-- departamento donde trabaja
+
+
+-- JOIN -> unir tablas
+SELECT ci_id,e.snombre,sappaterno, d.snombre as departamento
+FROM empleados e
+JOIN departamentos d ON e.dpto_id=d.numero_id;
+

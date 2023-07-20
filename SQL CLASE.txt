@@ -1,0 +1,40 @@
+CREATE DATABASE agenda;
+USE agenda;
+
+CREATE TABLE contactos(
+    codigo_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombres VARCHAR(45) NOT NULL,
+    apellidos VARCHAR(45) NOT NULL,
+    correo VARCHAR(50),
+    fecha_nacimiento DATE
+);
+CREATE TABLE contactos_telefonos(
+    contacto_id INT,
+    numero VARCHAR(10),
+    tipo VARCHAR(15),
+    PRIMARY KEY(contacto_id,numero)
+);
+ALTER TABLE contactos_telefonos
+ADD FOREIGN KEY (contacto_id) REFERENCES contactos(codigo_id);
+-- INSERT TOTAL
+INSERT INTO contactos VALUES(1,'Juan','Perez','jperez@gmail.com','2002-12-05');
+INSERT INTO contactos VALUES(DEFAULT,'Luis','Gomez','gomez@gmail.com','2005-02-15');
+
+INSERT INTO contactos VALUES(DEFAULT,'Pablo','Lopez',NULL,NULL);
+INSERT INTO contactos_telefonos VALUES(5,'70541241','Celular');
+
+-- INSERT PARCIAL
+INSERT INTO contactos(apellidos,nombres) VALUES('Araoz','Alejandro');
+INSERT INTO contactos(apellidos,codigo_id,nombres) VALUES('Super',500,'Exagerado');
+-- UPDATE
+-- UPDATE tabla SET cambios_col, ... WHERE condicion
+UPDATE contactos SET nombres =apellidos, apellidos = nombres
+WHERE codigo_id = 500;
+UPDATE contactos SET apellidos = 'Exagerado'
+	WHERE codigo_id = 500;
+UPDATE contactos SET correo = 'nuevo@gmail.com'
+	WHERE codigo_id = 2;
+-- DELETE --> BORRAR REGISTROS
+DELETE FROM contactos_telefonos WHERE contacto_id=500 AND numero='70454241';
+DELETE FROM contactos_telefonos WHERE contacto_id=500;
+DELETE FROM contactos_telefonos;

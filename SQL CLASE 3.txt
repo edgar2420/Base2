@@ -1,0 +1,42 @@
+-- 1)Obtener todos los proyectos que
+-- estén relacionados con arboles
+SELECT *
+FROM proyectos
+WHERE snombre LIKE '%arboles%';
+
+-- 2)Obtener el ID de los empleados
+-- que tienen registradas mas de 5 horas
+-- trabajadas en algun proyecto
+SELECT DISTINCT empleado_id
+FROM trabajos
+WHERE ihoras > 5;
+
+-- 3) Obtener los empleados que tienen
+-- un sueldo menor a 1000 Bs. y no 
+-- son supervisados por nadie
+
+SELECT ci_id,snombre, sappaterno, nsalario, supervisor_id
+FROM empleados
+WHERE nsalario < 1000 AND supervisor_id IS NULL;
+
+-- JOINS
+
+SELECT e.ci_id, CONCAT(e.snombre,' ',e.sappaterno) as empleado, 
+    e.dpto_id, d.numero_id, d.snombre
+FROM empleados e
+JOIN departamentos d ON e.dpto_id=d.numero_id;
+
+SELECT e.ci_id, CONCAT(e.snombre,' ',e.sappaterno) as empleado, 
+    e.dpto_id, d.numero_id, d.snombre
+FROM empleados e, departamentos d 
+WHERE e.dpto_id=d.numero_id;
+
+-- Obtener el nombre del empleado, junto al
+-- nombre del familiar
+SELECT CONCAT(e.snombre,' ',e.sappaterno) as empleado,
+    f.snombre, f.srelacion
+FROM empleados e 
+LEFT JOIN familiares F ON e.ci_id=f.empleado_id
+WHERE f.snombre IS NULL;
+
+
