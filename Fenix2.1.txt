@@ -1,0 +1,302 @@
+CREATE TABLE cliente (
+id INT NOT NULL PRIMARY KEY,
+nombre VARCHAR(100) NOT NULL,
+apellido VARCHAR(100) NOT NULL,
+telefono INT,
+correo VARCHAR(50) NOT NULL,
+contraseña VARCHAR(100) NOT NULL
+);
+
+SELECT * FROM cliente;
+
+CREATE TABLE repartidor (
+ci_id INT NOT NULL PRIMARY KEY,
+nombre VARCHAR(100) NOT NULL,
+apellido VARCHAR(100) NOT NULL,
+telefono INT,
+dtNacimiento DATE NOT NULL
+);
+
+
+CREATE TABLE estadoPedido(
+estado_id INT NOT NULL PRIMARY KEY,
+id_pedido INT,
+snombre VARCHAR (20),
+fecha DATE NOT NULL
+);
+
+CREATE TABLE ubicacion(
+	ubicacion_id SERIAL PRIMARY KEY,
+	calle VARCHAR(30) NOT NULL,
+	nro_casa INT NOT NULL,
+    id_cliente INT,
+FOREIGN KEY (id_cliente) REFERENCES cliente(id)
+);
+
+CREATE TABLE pedidos (
+numero SERIAL PRIMARY KEY,
+id_cliente INT,
+ci_repartidor INT,
+fecha DATE NOT NULL,
+estado VARCHAR (15) NOT NULL,
+tipoPago VARCHAR(20) NOT NULL,
+total INT NOT NULL
+);
+
+
+CREATE TABLE restaurante (
+nombre VARCHAR(30) NOT NULL PRIMARY KEY,
+ubicacion VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE productos(
+producto_id SERIAL NOT NULL PRIMARY KEY,
+n_restaurante VARCHAR (20),
+precio DECIMAL(8,2) NOT NULL,
+nombre VARCHAR(40) NOT NULL,
+tipo VARCHAR(15) NOT NULL,
+UNIQUE(producto_id, n_restaurante)
+);
+
+CREATE TABLE items(
+inombre VARCHAR(40) NOT NULL,
+id_producto INT,
+precio DECIMAL(8,2),
+PRIMARY KEY (inombre, id_producto)
+);
+
+CREATE TABLE detallePedido(
+detalle_id SERIAL PRIMARY KEY,
+id_pedido INT,
+id_producto INT,
+cantidad INT,
+subtotal DECIMAL(8,2),
+detalle VARCHAR(200),
+UNIQUE(detalle_id, id_pedido, id_producto)
+);
+
+CREATE TABLE repartidor_logs(
+log_id SERIAL NOT NULL PRIMARY KEY,
+dtOperacion date,
+ci_id INT,
+nombre VARCHAR(30) NOT NULL,
+apellido VARCHAR(30) NOT NULL
+);
+
+ALTER TABLE pedidos
+  ADD CONSTRAINT FK_pedidos_id_cliente
+  FOREIGN KEY (id_cliente)
+  REFERENCES cliente (id);
+  
+  ALTER TABLE pedidos
+  ADD CONSTRAINT FK_pedidos_ci_repartidor
+  FOREIGN KEY (ci_repartidor)
+  REFERENCES repartidor (ci_id);
+
+  ALTER TABLE estadoPedido
+  ADD CONSTRAINT FK_estadoPedido_id_pedido
+  FOREIGN KEY (id_pedido)
+  REFERENCES pedidos (numero);
+
+ALTER TABLE productos ADD FOREIGN KEY (n_restaurante) REFERENCES restaurante (nombre);
+
+ALTER TABLE detallePedido ADD FOREIGN KEY (id_pedido) REFERENCES pedidos (numero);
+ALTER TABLE detallePedido ADD FOREIGN KEY (id_producto) REFERENCES productos (producto_id);
+
+ALTER TABLE items ADD FOREIGN KEY (id_producto) REFERENCES productos (producto_id);
+
+CREATE EXTENSION pgcrypto;
+
+
+--INSERTAR
+
+CREATE OR REPLACE FUNCTION ins_repartidor(
+e_ci_id INT,
+e_nombre TEXT,
+e_apellido TEXT,
+e_telefono INT,
+e_dtNacimiento DATE
+) RETURNS void AS
+$BODY$
+BEGIN
+
+	IF EXISTS(SELECT * FROM repartidor WHERE ci_id = e_ci_id) THEN
+	update repartidor set nombre = e_nombre,
+	apellido = e_apellido, telefono = e_telefono, dtNacimeinto = e_dtNacimiento where ci_id = e_ci_id;
+	
+	elsif NOT EXISTS(SELECT * FROM repartidor WHERE ci_id = e_ci_id) THEN
+		INSERT INTO repartidor VALUES(e_ci_id,
+		e_nombre, e_apellido, e_telefono, e_dtNacimiento);
+	END IF;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+ALTER TABLE repartidor
+ADD CONSTRAINT check_fecha CHECK (date_part('year',age(dtNacimiento))>=18);
+
+
+--TRIGGERS
+
+CREATE OR REPLACE FUNCTION logger_repartidor()
+RETURNS TRIGGER AS
+$$
+BEGIN
+
+	IF TG_OP = 'INSERT' THEN
+		INSERT INTO repartidor_logs VALUES(DEFAULT, current_timestamp, NEW.ci_id, NEW.nombre, NEW.apellido);
+	ELSIF TG_OP = 'UPDATE' THEN
+		INSERT INTO repartidor_logs VALUES(DEFAULT, current_timestamp, NEW.ci_id, NEW.nombre, NEW.apellido);
+	END IF;
+RETURN OLD;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION ins_cliente(
+c_id INT,
+c_nombre VARCHAR(30),
+c_apellido VARCHAR(30),
+c_telefono INT,
+c_correo VARCHAR(40),
+c_contraseña text
+) RETURNS void AS
+$BODY$
+BEGIN
+
+	IF EXISTS(SELECT * FROM cliente WHERE id = c_id) THEN
+		update cliente set contraseña = crypt(c_contraseña, gen_salt('bf')), nombre = c_nombre,
+			apellido = c_apellido, telefono = c_telefono, correo = c_correo where id = c_id;
+	
+	elsif NOT EXISTS(SELECT * FROM cliente WHERE id = c_id) THEN
+		INSERT INTO cliente VALUES(c_id, c_nombre, c_apellido, c_telefono, c_correo, 
+								   crypt(c_contraseña, gen_salt('bf')));
+	END IF;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+
+--VERIFICACIONES
+
+CREATE OR REPLACE FUNCTION verificarCliente()
+RETURNS TEXT AS
+$$
+BEGIN
+
+	IF EXISTS (SELECT *FROM cliente WHERE id = $1 AND contraseña = crypt($2, contraseña)) THEN
+		RETURN 'Sesion iniciada correctamente';
+	ELSE
+		RAISE EXCEPTION 'Usuario y/o Contraseña incorrectos';
+	END IF;
+END
+$$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION verificarRepartidor()
+RETURNS TEXT AS
+$$
+BEGIN
+
+	IF EXISTS (SELECT *FROM repartidor WHERE usuario = $1 AND contraseña = crypt($2, contraseña)) THEN
+		RETURN 'Sesion iniciada correctamente';
+	ELSE
+		RAISE EXCEPTION 'Usuario y/o Contraseña incorrectos';
+	END IF;
+END
+$$
+LANGUAGE plpgsql;
+
+
+--Validacion de cliente
+
+CREATE OR REPLACE FUNCTION validar_cliente()
+RETURNS TRIGGER AS
+$$
+BEGIN
+
+	IF NEW.id IS NULL THEN
+	RAISE EXCEPTION 'El id no puede ser nulo';
+	END IF;
+	IF NEW.nombre !~* '^([A-Z]{1}[a-zñáéíóúÑÁÉÍÓÚ]+[\s]*)+$' THEN
+	RAISE EXCEPTION 'Solo se pueden introducir letras en este campo';
+	END IF;
+	IF NEW.apellido !~* '^([A-Z]{1}[a-zñáéíóúÑÁÉÍÓÚ]+[\s]*)+$' THEN
+	RAISE EXCEPTION 'Solo se pueden introducir letras en este campo';
+	END IF;
+	IF NEW.telefono IS NULL THEN
+	RAISE EXCEPTION 'El telefono no puede ser nulo';
+	END IF;
+	
+RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+CREATE TRIGGER validar_cliente
+	BEFORE INSERT OR UPDATE ON cliente
+	FOR EACH ROW
+	EXECUTE PROCEDURE validar_cliente();
+	
+	
+--Validacion de empleado
+
+CREATE OR REPLACE FUNCTION validar_repartidor()
+RETURNS TRIGGER AS
+$$
+BEGIN
+
+	IF NEW.ci_id IS NULL THEN
+	RAISE EXCEPTION 'El ci no puede ser nulo';
+	END IF;
+	IF NEW.nombre !~* '^([A-Z]{1}[a-zñáéíóúÑÁÉÍÓÚ]+[\s]*)+$' THEN
+	RAISE EXCEPTION 'Solo se pueden introducir letras en este campo';
+	END IF;
+	IF NEW.apellido !~* '^([A-Z]{1}[a-zñáéíóúÑÁÉÍÓÚ]+[\s]*)+$' THEN
+	RAISE EXCEPTION 'Solo se pueden introducir letras en este campo';
+	END IF;
+	IF NEW.telefono IS NULL THEN
+	RAISE EXCEPTION 'El telefono no puede ser nulo';
+	END IF;
+	
+RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+CREATE TRIGGER validar_repartidor
+	BEFORE INSERT OR UPDATE ON repartidor
+	FOR EACH ROW
+	EXECUTE PROCEDURE validar_repartidor();
+	
+	
+--INSERTAR PRODUCTOS Y RESTAURANTES
+
+CREATE OR REPLACE FUNCTION ins_restaurante(
+	p_nombre varchar,
+	p_ubicacion varchar
+	) RETURNS void AS
+$BODY$
+BEGIN
+	INSERT INTO restaurante VALUES (p_nombre, p_ubicacion);
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION ins_items(
+	p_inombre varchar,
+	p_id_producto int,
+	p_precio numeric(8,2)
+	) RETURNS void AS
+$BODY$
+BEGIN
+	INSERT INTO items VALUES (p_inombre, p_id_producto, p_precio);
+END;
+$BODY$
+LANGUAGE plpgsql;
+	
