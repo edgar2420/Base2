@@ -1,0 +1,65 @@
+select * from TblTaza;
+select * from Tbl_Moneda;
+drop table Tbl_Taza
+
+create table TblTaza(
+  id_Taza int,
+  Fecha date,
+  Valor int,
+  idMoneda int,
+  primary key (id_Taza)
+);
+
+alter table TblTaza
+add constraint fk_taza_idMoneda
+foreign key (idMoneda)
+references Tbl_Moneda(idMoneda);
+
+CREATE FUNCTION [dbo].[RetornarValor]
+(
+	-- Add the parameters for the function here
+	@idMoneda int
+)
+RETURNS TABLE 
+AS
+RETURN 
+(
+	-- Add the SELECT statement with parameter references here
+SELECT top(1) * FROM TblTaza
+
+where idMoneda = 1
+order by Fecha desc
+
+)
+
+insert into TblTaza values (1,'2018-06-12',0 ,1 );
+insert into TblTaza values (2,'2018-05-12',6.96,2 );
+insert into TblTaza values (3,'2018-08-11',7.81 ,3 );
+
+select * from TblTaza;
+
+CREATE FUNCTION [dbo].[demostrar]
+(
+
+)
+RETURNS TABLE 
+AS
+RETURN 
+(
+select t.Fecha,t.Valor ,t.Valor * M.Valor as Resultado from TblTaza t
+inner join Tbl_Moneda M on t.id_Taza = t.idMoneda  
+
+
+
+)
+select * from demostrar();
+
+
+select t.Fecha,t.Valor , M.Valor as Resultado from TblTaza t
+inner join Tbl_Moneda M on t.id_Taza = t.idMoneda  
+
+-- IdTaza--    Fecha  -- Valor-- Valor MONEDA  consultaTOTAL
+--   1 -- 2018-06-12  --  6   --    100				600
+--   2 -- 2018-06-12  --  6   --    200             1200
+
+

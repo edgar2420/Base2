@@ -1,0 +1,116 @@
+--- diseñar una consulta que indique la diferencia que existe entre el salario de cada empleado y el salario promedio de la empresa
+SELECT ci_id, CONCAT(snombre,' ',sappaterno, ' ', sapmaterno ) as nombre_completo,
+nsalario,ROUND((select avg(nsalario) from empleados),2) as promedio,
+nsalario - ROUND((select avg(nsalario) from empleados),2) as diferencia
+FROM empleados
+WHERE nsalario - ROUND((select avg(nsalario) from empleados),2) < 0 
+----------- si es doc pac ning
+
+select p.*, 
+case when p.codigo_id in (select codigo_id from doctores d) and p.codigo_id in (select codigo_id from pacientes p2) then 'Ambos'
+when p.codigo_id in (select codigo_id from doctores d) and p.codigo_id not in (select codigo_id from pacientes p2) then 'Doctores'
+when p.codigo_id not in (select codigo_id from doctores d) and p.codigo_id in (select codigo_id from pacientes p2) then 'Pacientes'
+when p.codigo_id not in (select codigo_id from doctores d2) and p.codigo_id not in (select codigo_id from pacientes p4) then 'Ninguno'
+end as Casos
+from personas p;
+
+select ci_id, concat (nombre, ' ', appaterno), salario,
+case when salario < 2160 then 'Menor salario'
+when salario < 8000 then 'Bien pagado'
+else 'Ricky Ricon'
+end as Casos
+from empleados e;
+
+select case 
+when e.ci_id in (select admin_id from departamentos d) then 'Administrador'
+when e.ci_id in (select supervisor_id from empleados e2) and e.ci_id not in (select admin_id from departamentos d) then 'Supervisor'
+else 'operador'
+end as rubro,*
+from empleados e order by e.ci_id 
+
+-------- delete cascade-
+alter table pacientes 
+drop constraint pacientes_codigo_id_fkey;
+
+alter table pacientes 
+add foreign key (codigo_id) references personas(codigo_id) on update cascade on delete cascade;
+
+alter table consultas 
+drop constraint consultas_paciente_id_fkey;
+
+alter table consultas 
+add foreign key (paciente_id) references pacientes(codigo_id) on update cascade on delete cascade;
+
+delete from pacientes p where codigo_id = '19905130-AF';
+--------- join---------------
+clinica       |dtfecha   |paciente        |doctor          |
+--------------+----------+----------------+----------------+
+Caja Nacional |2015-03-23|Luis Trujillo   |Javier Quino    |
+ProSalud      |2015-05-12|Isabel Rosales  |Javier Quino    |
+
+select dtfecha,c2.snombre as clinica,concat(p.snombre,' ',p.sapellido )as paciente, concat(d.snombre,' ',d.sapellido )as doctor from consultas c 
+join clinicas c2  on c.clinica_id = c2.codigo_id 
+join personas p on c.paciente_id =p.codigo_id 
+join personas d ON c.doctor_id =d.codigo_id 
+
+--lo mismo pero con salario>2160 y nivel=3 el join es usar la tabla donde hay coincidencias
+select dtfecha,c2.snombre as clinica,concat(p.snombre,' ',p.sapellido )as paciente, concat(d.snombre,' ',d.sapellido )as doctor from consultas c
+join clinicas c2  on c.clinica_id = c2.codigo_id 
+join personas p on c.paciente_id =p.codigo_id 
+join personas d ON c.doctor_id =d.codigo_id
+join doctores d2 on c.doctor_id=d2.codigo_id 
+where d2.nsalario >2160 and c2.inivel=3
+
+----- INICIO PROG---
+
+CREATE OR REPLACE FUNCTION ins_paciente(	
+	p_nombre text, 
+	p_apellido text, 
+	p_fecha date, 
+	p_grupo_sangre text
+) RETURNS void AS
+$$
+DECLARE
+ v_codigo TEXT;
+ v_sangre TEXT;
+BEGIN
+	SELECT to_char(p_fecha,'YYYYMMDD') || LEFT(p_nombre,1) || LEFT(p_apellido,1), CONCAT(p_grupo_sangre,'+') INTO v_codigo, v_sangre;
+  INSERT INTO personas(codigo_id,snombre,sapellido) VALUES (v_codigo,p_nombre,p_apellido);
+	INSERT INTO pacientes VALUES (v_codigo,v_sangre);
+END
+$$
+LANGUAGE plpgsql;
+ select ins_paciente('Juan','Perez','19950220','O');
+
+
+---inserto consult
+CREATE OR REPLACE FUNCTION ins_consu(	
+	p_nombre_clinica text, 	 
+	p_nombre_pac text,  		
+	p_nombre_doc text  			
+) RETURNS void AS
+$$
+DECLARE
+-- declarar variables
+	v_clinica INT;
+	v_paciente TEXT;
+	v_doctor TEXT;
+BEGIN
+	-- 1) buscar ID clinica
+	SELECT codigo_id INTO v_clinica FROM clinicas WHERE snombre = p_nombre_clinica;
+	-- 2) buscar ID paciente
+	SELECT codigo_id INTO v_paciente 
+	FROM personas p NATURAL JOIN pacientes p2 
+	WHERE CONCAT(snombre,' ',sapellido) = p_nombre_pac;
+	-- 3) buscar ID doctor
+	SELECT codigo_id INTO v_doctor 
+	FROM personas p JOIN doctores d USING (codigo_id) 
+	WHERE snombre = split_part(p_nombre_doc,' ',1) AND sapellido = split_part(p_nombre_doc,' ',2);
+	-- 4) registrar la consulta (ID_cli,ID_doc,ID_pac, CURRENT_TIMESTAMP | NOW() )	
+	IF v_clinica IS NOT NULL THEN
+		INSERT INTO consultas VALUES ((select), v_clinica, v_doctor, v_paciente, current_timestamp);
+	ELSE
+		RAISE EXCEPTION 'NO EXISTE LA CLINICA INDICADA';
+	END IF;
+END
+$$ LANGUAGE plpgsql;

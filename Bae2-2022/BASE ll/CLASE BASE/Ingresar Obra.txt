@@ -1,0 +1,45 @@
+CREATE OR REPLACE FUNCTION arte.insert_objeto(
+   "p_año" integer,
+    p_artista text,
+    p_titulo text,
+    p_tipo_objeto text,
+    p_estilo text,
+    p_anchura integer,
+    p_altura integer,
+    p_material text
+)
+RETURNS VOID AS
+$BODY$
+DECLARE 
+--DECLARAR VARIABLES TEMPORALES
+  v_artista INT;
+  v_codigo TEXT;
+BEGIN
+ --BLOQUE DE OPERACIONES SQL 
+ 
+ --VERIFICAR EL ARTISTA
+ 	IF (SELECT count(*) FROM artista WHERE nombre ilike '%'||p_artista||'%') > 0 THEN
+		SELECT artista_id INTO v_artista FROM artista WHERE nombre ilike '%'||p_artista||'%';
+	ELSE
+		INSERT INTO artista(nombre) VALUES (p_artista);
+		SELECT currval('public.artista_artista_id_seq') INTO v_artista;
+	END IF;
+
+	-- ASIGNAR CODIGO
+	SELECT generar_codigo_objeto(p_tipo_objeto,v_artista,p_titulo) INTO v_codigo;
+ 
+ --INSERTAR LA OBRA DE ARTE
+	INSERT INTO arte.Objeto_de_arte VALUES(v_codigo,"p_año",v_artista,p_titulo,null,null,null,null);
+	CASE p_tipo_objeto
+	WHEN 'pintura' THEN
+		INSERT INTO arte.objeto_pintura VALUES(v_codigo,p_estilo);
+	WHEN 'escultura' THEN
+		INSERT INTO arte.objeto_escultura VALUES(v_codigo,p_estilo,p_anchura,p_altura,p_material);
+	WHEN 'monumento' THEN
+		INSERT INTO arte.objeto_monumento VALUES(v_codigo,p_anchura,p_altura,p_material);
+	ELSE
+		INSERT INTO arte.objeto_otro VALUES(v_codigo,p_estilo);
+	END CASE;	
+END
+$BODY$
+LANGUAGE plpgsql;

@@ -1,0 +1,51 @@
+REATE EXTENSION postgres_fdw;
+
+CREATE SERVER remoto
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS(host '192.168.80.97',dbname 'PARCIAL');
+
+CREATE USER MAPPING FOR CURRENT_USER
+SERVER remoto
+OPTIONS(user 'base2',password 'base2');
+
+CREATE SCHEMA seguridad;
+
+IMPORT FOREIGN SCHEMA public LIMIT TO(tblusuarios)
+FROM SERVER remoto INTO seguridad;
+
+
+CREATE EXTENSION pgcrypto;
+CREATE OR REPLACE FUNCTION encriptar()
+RETURNS TRIGGER AS
+$$
+BEGIN
+		NEW.spassword := crypt(NEW.spassword,'nur');
+		RETURN NEW;
+END
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER trig_usuarios BEFORE INSERT OR UPDATE 
+ON seguridad.tblusuarios
+FOR EACH ROW EXECUTE PROCEDURE encriptar();
+
+select * from seguridad.tblusuarios
+
+INSERT INTO seguridad.tblusuarios VALUES(200,1,'test','test',null,1,1,false,null,null,0)
+
+CREATE OR REPLACE FUNCTION autenticar (usuario TEXT, contra TEXT)
+RETURNS BOOLEAN AS
+$$
+BEGIN
+ IF EXISTS(SELECT * FROM seguridad.tblusuarios WHERE scuenta = usuario
+	AND spassword = crypt(contra,'nur')) THEN
+		RETURN true;
+ ELSE
+ RAISE EXCEPTION 'Usuario y/o contraseña incorrecto';
+		RETURN false;
+ END IF;
+END;
+$$
+LANGUAGE plpgsql;
+
+SELECT autenticar('test','nur');

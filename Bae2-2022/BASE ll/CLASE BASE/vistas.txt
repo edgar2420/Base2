@@ -1,0 +1,23 @@
+-- obtener una consulta que muestre el total de obras de arte por tipo.
+-- segun el siguiente formato
+
+--    +--------------+-------+
+--    | Obra de Arte | Total |
+--    +--------------+-------+
+--    | Pintura      | 3     |
+--    +--------------+-------+
+--    | Escultura    | 0     |
+--    +--------------+-------+
+--    | ...          | ...   |
+--    +--------------+-------+
+--    | Otros        | 4     |
+--    +--------------+-------+
+
+CREATE VIEW resumen_obras AS
+SELECT 'Pintura' as "Obra de Arte" ,COUNT(*) as "Total" FROM pintura
+UNION
+SELECT 'Escultura',COUNT(*) FROM escultura
+UNION
+SELECT 'Monumento',COUNT(*) FROM monumento
+UNION
+SELECT 'Otros',COUNT(*) FROM Otro;

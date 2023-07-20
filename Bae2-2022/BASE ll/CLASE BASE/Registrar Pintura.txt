@@ -1,0 +1,39 @@
+-- select * from objeto_de_arte 
+-- select * from pintura 
+-- select mk_pintura(0,'1978','1','nueva pintura 2','...','Bolivia','Actual','Crayones');
+
+-- CREAR UN SP QUE REGISTRE UNA OBRA DE ARTE 
+-- INDICANDO EL TIPO DE OBRA QUE SE REGISTRARA PARA DEFINIR A QUE
+-- TABLA PERTENECE
+
+CREATE OR REPLACE FUNCTION mk_pintura(
+    p_codigo int,
+   "p_año" text,
+    p_artista text,
+    p_titulo text,
+    p_descripcion text,
+    p_pais text,
+    p_epoca text,
+    p_tipo text)
+  RETURNS TEXT AS
+$BODY$
+	DECLARE
+		llave int ;
+	BEGIN
+		-- COMPARAR		-> 	=
+		-- DIFERENTE 	->	<>
+		-- ASIGNAR		->  :=
+		IF p_codigo = 0 THEN
+			select max(objeto_id)+1 into llave from objeto_de_arte;
+			insert into objeto_de_arte values(llave,p_año::int,p_artista::int,p_titulo,p_descripcion,p_pais,p_epoca,null);
+			insert into pintura values (llave,p_tipo);
+			RETURN 'NUEVO REGISTRO CON CODIGO '||llave; 
+		ELSE
+			UPDATE objeto_de_arte SET año=p_año::int, artista=p_artista::int,
+			titulo=p_titulo WHERE objeto_id=p_codigo;
+			UPDATE pintura SET pintura=p_tipo WHERE objeto_id=p_codigo;
+			RETURN 'SE ACTUALIZO EL REGISTRO';
+		END IF;
+	END;
+	$BODY$
+  LANGUAGE plpgsql 

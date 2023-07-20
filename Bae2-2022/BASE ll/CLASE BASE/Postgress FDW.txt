@@ -1,0 +1,19 @@
+CREATE EXTENSION IF NOT EXISTS postgres_fdw;
+
+CREATE SERVER db_remoto
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS(host '192.168.80.97', dbname 'MUSEO', port '5432');
+
+CREATE USER MAPPING FOR CURRENT_USER
+SERVER db_remoto
+OPTIONS (user 'base2', password 'base2');
+
+CREATE USER MAPPING FOR base2
+SERVER db_remoto
+OPTIONS (user 'base2', password 'base2');
+
+IMPORT FOREIGN SCHEMA arte
+FROM SERVER db_remoto INTO arte;
+
+
+SELECT * FROM arte.objeto_de_arte

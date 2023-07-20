@@ -1,0 +1,153 @@
+
+select * from feriaexpo.tblevento_has_tbljurados;
+select * from feriaexpo.tblproyectos_has_tblintegrantes;
+select * from feriaexpo.tblintegrantes;
+select * from feriaexpo.tblproyectos;
+select * from feriaexpo.tbljurados;
+
+
+-- 15 PUNTOS 
+
+select 
+* from feriaexpo.tblevento
+where direcion  like 'BARRIO LUCERO'AND año = 2018;
+
+
+select 
+* from feriaexpo.tblintegrantes
+where carrera like 'INGENIERIA SISTEMAS'AND cargo = 'ESTUDIANTE';
+
+
+select c.numerogrupo,c.materia,c.jefeproyecto
+from  feriaexpo.tblproyectos c 
+where c.materia ='BASE DE DATOS1' and jefeproyecto = '538387';
+
+select nombre
+from feriaexpo.tbljurados
+where carrera = 'INGENIERIA SISTEMAS' 
+group by nombre ;
+
+
+
+	create or replace FUNCTION  insertar_Triggers_jurados ()returns trigger as $insertar$
+	
+	declare begin 
+	
+	
+	insert into feriaexpo.tbljurados(
+	ci,nombre,carrera)
+	
+	values (int,text,text());
+	
+	
+	RETURN null;
+	end;
+	$insertar$ language plpgsql;
+	 
+	create trigger  insertar_Triggers_jurados after update
+    on feriaexpo.tbljurados for each row 
+    execute procedure insertar_Triggers_jurados();
+	-------------------------------------------------------		
+			
+    select * from feriaexpo.tblproyectos	
+
+	create or replace FUNCTION  insertar_Triggers_proyectoos ()returns trigger as $insertar$
+	
+	declare begin 
+	
+	
+	insert into feriaexpo.tbljurados(
+	numerogrupo,materia,nombreproyecto,jefeproyecto,tblevento_nro_evento)
+	
+	values (int,text,text,text,text());
+	
+	
+	RETURN null;
+	end;
+	$insertar$ language plpgsql;
+	 
+	create trigger  insertar_Triggers_proyectoos after update
+    on feriaexpo.tblproyectos for each row 
+    execute procedure insertar_Triggers_proyectoos();
+			
+------------------------------------------------------------------			
+
+ select * from feriaexpo.tbljurados
+  where nombre not like 'J%';
+
+				
+ select registro,nombrecompleto
+ from feriaexpo.tblintegrantes as f
+ where not exists
+ (select *from feriaexpo.tblevento as d
+ where f.cargo = d.nombre
+ and d.año=2018);			
+			
+
+select nombre, sum(año)
+from feriaexpo.tblevento
+group by nombre ;
+
+
+select nombre, count(*)
+from feriaexpo.tblevento
+where año = 2018
+
+select count(*) from feriaexpo.tblevento
+group by nombre;
+
+where direcion ='BARRIO LUCERO';
+
+select * from feriaexpo.tblintegrantes;
+
+
+SELECT 
+rp.registro,rp.carrera,rp.nombrecompleto,rf.nombre,rf.carrera
+FROM 
+ feriaexpo.tblintegrantes rp 
+INNER JOIN
+feriaexpo.tbljurados rf
+
+
+select l.ci,nombre
+  from feriaexpo.tbljurados as l
+  join feriaexpo.tblintegrantes as e
+  on l.ci= e.registro ;
+
+
+
+
+
+select * from feriaexpo.tbljurados
+select * from feriaexpo.tblintegrantes
+
+-- 5 pts
+
+CREATE EXTENSION tablefunc;
+
+CREATE TABLE feriaexpo (
+  id int,
+  apellido text,
+  nombre text
+);
+
+INSERT INTO example VALUES
+  (123, 'soliz', 'leo'),
+  (123, 'padilla', 'carolina');
+
+SELECT *
+FROM feriaexpo
+ORDER BY id ASC, key ASC;
+
+
+SELECT *
+FROM crosstab(
+    'SELECT *
+     FROM feriaexpo
+     ORDER BY id ASC;'
+
+) AS ct(ci INT, apellido TEXT, nombre TEXT);
+
+
+
+

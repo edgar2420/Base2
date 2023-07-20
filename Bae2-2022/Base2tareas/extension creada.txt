@@ -1,0 +1,18 @@
+create extension postgres_fdw;
+
+-- preparar un server
+create server empresa_remoto
+foreign data wrapper postgres_fdw
+options(dbname 'empresa', host '26.161.16.242');
+
+create user mapping for current_user
+server empresa_remoto
+options(user 'remoto', password 'remoto');
+
+import foreign schema public 
+from server empresa_remoto
+into remoto;
+
+select * from empleados
+union
+select * from remoto.empleados;

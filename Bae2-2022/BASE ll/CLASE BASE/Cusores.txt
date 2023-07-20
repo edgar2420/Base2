@@ -1,0 +1,25 @@
+CREATE OR REPLACE FUNCTION grupo_polizas(p_cliente BIGINT)
+RETURNS  text AS
+$$
+DECLARE
+	cur1 CURSOR FOR 
+		SELECT A.snombre as categoria,count(*) as total
+		FROM tblpolizas P
+		JOIN tblClientes C ON P.cliente_id=C.codigo_id
+		JOIN tblservicios S On P.servicio_id=S.codigo_id
+		JOIN prmcategorias A ON S.categoria_id=A.codigo_id
+		WHERE cliente_id=p_cliente
+		GROUP BY A.snombre;
+	resultado text := '';
+BEGIN
+	FOR _record IN cur1 LOOP
+		resultado := resultado || _record.total || '-' ||_record.categoria ||'|';
+	END LOOP;
+	IF LENGTH(resultado )> 0  THEN
+		RETURN substring(resultado,1,length(resultado)-1);
+	ELSE
+		RETURN '';
+	END IF;
+END;
+$$
+LANGUAGE plpgsql;

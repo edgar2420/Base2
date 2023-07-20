@@ -1,0 +1,54 @@
+
+CREATE EXTENSION postgres_fdw;
+
+CREATE SERVER remoto_general
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS(dbname 'empresaBackupDos', host '127.0.0.1');
+
+CREATE USER MAPPING FOR current_user
+SERVER remoto_general
+OPTIONS(user 'remoto_tarea', password 'remoto');
+
+CREATE SCHEMA remoto;
+
+IMPORT FOREIGN SCHEMA public LIMIT TO(empleados,familiares)
+FROM SERVER remoto_general
+INTO remoto;
+
+
+CREATE SERVER remoto_uno
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS(dbname 'empresaBackup', host '127.0.0.1');
+
+CREATE USER MAPPING FOR current_user
+SERVER remoto_uno
+OPTIONS(user 'remoto_tarea', password 'remoto');
+
+CREATE SCHEMA remoto_uno;
+
+IMPORT FOREIGN SCHEMA public LIMIT TO(empleados,familiares)
+FROM SERVER remoto_uno
+INTO remoto_uno;
+
+
+CREATE SERVER remoto_tres
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS(dbname 'empresaBackupTres', host '127.0.0.1');
+
+CREATE USER MAPPING FOR current_user
+SERVER remoto_tres
+OPTIONS(user 'remoto_tarea', password 'remoto');
+
+CREATE SCHEMA remoto_tres;
+
+IMPORT FOREIGN SCHEMA public LIMIT TO(empleados,familiares)
+FROM SERVER remoto_tres
+INTO remoto_tres;
+
+select * from remoto.empleados;
+
+select count(*) from remoto.empleados
+union 
+select count(*) from remoto_tres.empleados
+union
+select count(*) from remoto_uno.empleados;

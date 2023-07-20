@@ -1,0 +1,64 @@
+CREATE TABLE empleado(
+codigo_id SERIAL PRIMARY KEY, -->
+nombre TEXT NOT NULL,					--> No puede contener Numeros
+apellido TEXT,								--> No puede ser nulo o vacio
+salario NUMERIC (8,2)					--> No puede ser negativo
+);
+
+CREATE TABLE log_empleado(
+codigo INT,
+operacion CHAR(1),
+fecha TIMESTAMP,
+usuario TEXT
+);
+
+
+CREATE OR REPLACE FUNCTION trig_empleado()
+RETURNS TRIGGER AS 
+$$
+BEGIN
+ IF NEW.nombre ~ '[0-9]' THEN
+	RAISE EXCEPTION 'El nombre no contener numeros';
+ ELSIF NEW.apellido IS NULL THEN
+	RAISE EXCEPTION 'El apellido no puede ser nulo';
+ ELSIF NEW.salario < 0 THEN
+	RAISE EXCEPTION 'El salario no puede tener un valor negativo';
+	ELSE
+		RETURN NEW;
+ END IF;
+END;
+$$
+LANGUAGE plpgsql
+
+CREATE TRIGGER empleado_check BEFORE INSERT OR UPDATE
+ON empleado FOR EACH ROW EXECUTE PROCEDURE trig_empleado();
+
+INSERT INTO empleado VALUES (DEFAULT, 'Juan','Perez',20);
+
+CREATE OR REPLACE FUNCTION logger_empleado()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF (TG_OP = 'DELETE') THEN
+		INSERT INTO log_empleado VALUES(OLD.codigo_id,'D',current_timestamp,current_user);
+		RETURN OLD;
+	ELSIF (TG_OP = 'UPDATE') THEN
+		IF OLD.salario < NEW.salario THEN
+			INSERT INTO log_empleado VALUES(OLD.codigo_id,'U',current_timestamp,OLD.salario||' -> '||NEW.salario);
+			RETURN NEW;
+		END IF;
+	END IF;
+	RETURN NULL;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER empleado_log AFTER INSERT OR UPDATE OR DELETE
+ON empleado FOR EACH ROW EXECUTE PROCEDURE logger_empleado();
+
+select * from empleado;
+
+update empleado
+set salario=2000 where codigo_id=12;
+
+select * from log_empleado ;

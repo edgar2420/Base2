@@ -1,0 +1,38 @@
+CREATE TYPE tabla_pintura as(
+	codigo TEXT,
+	artista int,
+	año int,
+	tipo_pintura text
+)
+
+CREATE OR REPLACE FUNCTION get_objetos()
+RETURNS SETOF arte.objeto_de_arte AS
+$$
+BEGIN
+	RETURN QUERY SELECT * FROM arte.objeto_de_arte;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_pinturas()
+RETURNS SETOF tabla_pintura AS
+$$
+BEGIN
+	RETURN QUERY SELECT A.objeto_id,artista,año,pintura::text
+	FROM arte.objeto_de_arte A
+	NATURAL JOIN arte.objeto_pintura B ;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_pinturas2()
+RETURNS TABLE(codigo text,artista int,
+año int,tipo_pintura text) AS
+$$
+BEGIN
+	RETURN QUERY SELECT A.objeto_id,A.artista,A.año,B.pintura::text
+	FROM arte.objeto_de_arte A
+	NATURAL JOIN arte.objeto_pintura B ;
+END;
+$$
+LANGUAGE plpgsql;

@@ -1,0 +1,23 @@
+
+-- OBTENER EL TOTAL DEL CONSULTAS REALIZADAS DE CADA 
+-- CLINICA POR MES
+
+SELECT D.snombre as clinica,extract(month from C.dtfecha) as mes,
+ count(*) as total 
+FROM consultas C
+JOIN clinicas D ON C.clinica_id=D.codigo_id
+GROUP BY 1,2
+ORDER BY 1,2 asc
+
+create extension tablefunc;
+
+SELECT * FROM crosstab('SELECT D.snombre as clinica,extract(month from C.dtfecha) as mes,
+ count(*) as total 
+FROM consultas C
+JOIN clinicas D ON C.clinica_id=D.codigo_id
+GROUP BY 1,2
+ORDER BY 1,2 asc',
+'select m from generate_series(1,12) m') AS
+resultado(clinica text, enero int, febrero int, marzo int,
+ abril int, mayo int, junio int, julio  int, agosto  int,
+ septiembre int, octubre int, noviembre int, diciembre int)

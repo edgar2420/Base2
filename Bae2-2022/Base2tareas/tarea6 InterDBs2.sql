@@ -1,0 +1,31 @@
+-- OBTENER LA LISTA DE EMPLEADOS QUE SOLO EXISTEN EN LA BASE DE DATOS "A"(1) Y NO EN LA "B"(2)
+-- Forma 1
+select * 
+from empleados
+where not exists (select * from empresab.empleados
+				 where empleados.ci_id = public.empleados.ci_id)
+				 order by ci_id asc;
+				 
+-- Forma 2
+select * from empleados
+except 
+select * from empresab.empleados
+order by ci_id asc;
+		
+-- OBTENER LA LISTA DE EMPLEADOS QUE SOLO EXISTEN EN LA DB "C"(3) Y NO EN "B"(2) Y "A"(1)
+				
+select * from empresac.empleados
+except 
+select * from empresab.empleados
+except
+select * from empleados
+order by ci_id asc;
+
+-- DISEÑAR UNA CONSULTA QUE ME INDIQUE LA INFORMACIÓN DEL EMPLEADO Y ADICIONAR UNA NUEVA COLUMNA AL COMIENZO INDICANDO EN QUE BASES DE DATOS EXISTE EL REGISTRO
+
+select 'Empresa A' as DB, * from empleados
+UNION
+select 'Empresa B', * from empresab.empleados
+UNION
+select 'Empresa C', * from empresac.empleados
+order by ci_id asc;
