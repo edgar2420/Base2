@@ -1,0 +1,26 @@
+CREATE OR REPLACE FUNCTION logger_empleados()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		INSERT INTO log_empleados VALUES(DEFAULT,current_timestamp,NEW.ci_id,
+		CONCAT(NEW.snombre,' ',NEW.sappaterno),CURRENT_USER,inet_client_addr());
+	ELSIF TG_OP = 'DELETE' THEN
+		INSERT INTO log_empleados VALUES(DEFAULT,current_timestamp,OLD.ci_id,
+		CONCAT(old.snombre,' ',old.sappaterno),current_user,inet_client_addr());
+	END IF;
+  RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER log_empleado
+AFTER INSERT OR DELETE ON empleados
+FOR EACH ROW
+EXECUTE PROCEDURE logger_empleados();
+
+select * from empleados
+insert into empleados values (1100,'test','test',null,'banzer',null,150,'20000110',null,1);
+DELETE FROM empleados WHERE ci_id = 1100;
+select * from empleados
+select * from log_empleados

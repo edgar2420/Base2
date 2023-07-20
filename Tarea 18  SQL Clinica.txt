@@ -1,0 +1,11 @@
+----Obtener todos los doctores que fueron pacientes
+select paciente_id from consultas E
+join doctores D on D.codigo_id = E.paciente_id;
+----Mostrar todos los pacientes(codigo, nombre completo) que tienen consultas registradas en "Prosalud" y en la "Caja Petrolera"
+select E.paciente_id from consultas E 
+join doctores D on D.codigo_id = E.paciente_id
+join clinicas F on F.snombre = 'ProSalud' or F.snombre = 'Caja Petrolera' group by E.paciente_id
+----Mostrar todos los pacientes(codigo, nombre completo) que tienen consultas registradas solamente en "Prosalud" y en la "Caja Petrolera"
+select paciente_id from consultas E 
+join doctores D on D.codigo_id = E.paciente_id
+join clinicas F on F.snombre = 'ProSalud' and F.snombre = 'Caja Petrolera'

@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION Consulta(clinica_id text, doctor_id text,
+paciente_id text) RETURNS void as
+$BODY$
+DECLARE
+Documento text;
+
+BEGIN
+select codigo_id into Documento from personas where snombre = split_part(doctor_id, ' ', 1)
+and sapellido = split_part(doctor_id, ' ', 2);
+END
+$BODY$
+LANGUAGE plpgsql;

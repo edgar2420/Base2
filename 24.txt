@@ -1,0 +1,28 @@
+CREATE TABLE elg_empresa (
+	tabla_info TEXT,
+	codigo_id SERIAL PRIMARY KEY,
+	op_info TEXT,
+	dtoperacion TIMESTAMP
+	);
+ 
+CREATE OR REPLACE FUNCTION logger_empresa()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF TG_OP = 'delete' THEN
+		INSERT INTO elg_empresa VALUES(TG_TABLE_NAME,DEFAULT,'INSERT',current_timestamp);
+	ELSIF TG_OP = 'update' THEN
+		INSERT INTO elg_empresa VALUES(TG_TABLE_NAME,DEFAULT,'DELETE',current_timestamp);
+	ELSIF TG_OP = 'insert' THEN
+		INSERT INTO elg_empresa VALUES(TG_TABLE_NAME,DEFAULT,'UPDATE',current_timestamp);
+	END IF;
+  RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER elg_empresa
+ AFTER INSERT OR DELETE OR UPDATE ON dpto_ubicaciones
+ FOR EACH ROW
+ EXECUTE PROCEDURE logger_empresa();
+ 

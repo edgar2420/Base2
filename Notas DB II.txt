@@ -1,0 +1,936 @@
+Restricciónes en las columnas por medio del comando CHECK
+
+ALTER TABLE empleados
+ADD CONSTRAINT check_salario CHECK (nsalario > 1 AND nsalario < 100000);
+
+ALTER TABLE empleados
+ADD CONSTRAINT check_fecha CHECK (date_part('year',age(dtnacimiento))>=18);
+-- ADD CONSTRAINT check_fecha CHECK (dtnacimiento < now() - interval '18 year');
+
+ALTER TABLE pacientes
+ADD CONSTRAINT check_sangre CHECK(UPPER(gsangre) IN ('O-','O+','A-','A+','B-','B+','AB-','AB+'));
+TRANSACCIONES SQL
+
+-- INICIA TRANSACCION
+BEGIN
+
+INSERT INTO personas VALUES ('19920621-LF','Luis',
+                             'Fuentes',7542187,'Av. Banzer 2do anillo','20220621');
+
+INSERT INTO pacientes VALUES('19920621-LF','B+');
+
+-- FINALIZA EL BLOQUE DE OPERACIONES
+ROLLBACK | COMMIT
+
+
+---------------------------------------------------------------------------------------------------
+
+
+Script Estructura ON UPDATE CASCADE + Código Update-Select
+
+alter table empleados 
+drop constraint empleados_supervisor_id_fkey;
+
+alter table empleados
+alter column supervisor_id type text;
+
+alter table familiares 
+drop constraint familiares_empleado_id_fkey;
+
+alter table familiares
+alter column empleado_id type text;
+
+alter table trabajos 
+drop constraint trabajos_empleado_id_fkey;
+
+alter table trabajos
+alter column empleado_id type text;
+
+alter table departamentos 
+drop constraint departamentos_admin_id_fkey;
+
+alter table departamentos
+alter column admin_id type text;
+
+alter table empleados
+alter column ci_id type text;
+
+alter table empleados
+add foreign key (supervisor_id) references empleados(ci_id) on update cascade;
+
+alter table familiares
+add foreign key (empleado_id) references empleados(ci_id) on update cascade on delete cascade;
+
+alter table trabajos
+add foreign key (empleado_id) references empleados(ci_id) on update cascade on delete cascade;
+
+alter table departamentos
+add foreign key (admin_id) references empleados(ci_id) on update cascade on delete set null;
+
+
+UPDATE empleados e
+SET ci_id = X.codigo
+FROM (
+    SELECT UPPER(CONCAT_WS('-',
+        LEFT(D.snombre, 3),
+        LEFT(E.sappaterno, 1)||LEFT(E.snombre, 1),
+        to_char(E.dtnacimiento, 'yy-mm-dd'))) as Codigo,ci_id
+FROM empleados E
+JOIN departamentos D ON E.dpto_id=D.numero_id) X
+WHERE e.ci_id = X.ci_id;
+
+
+--------------------------------------------------------------------------------------------------
+
+
+Comando CASE
+El comando CASE permite adicionar condicionales dentro de la seccion de SELECT en la consulta SQL, 
+puede aplicarse cuando se quiere devolver un resultado dependiendo de valor de una columna.
+
+CASE col WHEN val1 THEN res1 WHEN val2 THEN res2 END;
+o realizando condiciones de manera directa
+
+CASE WHEN condicion1 THEN res1 WHEN condicion2 THEN res2 ELSE res3 END;
+Por ejemplo:
+
+OBTENER LA LISTA DE PERSONAS REGISTRADAS, CON LAS SIGUIENTES COLUMNAS:
+
+ID (texto)
+NombreC (Nombre y Apellido)
+Tipo de Persona (Paciente, Doctor, Ambos, Ninguno)
+ SELECT codigo_id,sespecialidad,nsalario,
+   CASE WHEN nsalario < 2120 THEN 'Menor de S.M.'
+   WHEN nsalario > 2120 AND nsalario < 4000 THEN 'Bien Nomas'
+   ELSE 'DESCUENTOS!!' END AS filtro,
+   CASE bactivo WHEN true THEN 'Trabajando' ELSE 'Retirado' END 
+ FROM doctores    
+
+
+---------------------------------------------------------------------------------------------------
+
+
+Consutla Anidada
+
+    SELECT D.numero_id, D.snombre, SUM(E.nsalario) as total
+    FROM empleados E JOIN departamentos D ON E.dpto_id=D.numero_id
+    GROUP BY D.numero_id
+    HAVING SUM(E.nsalario) > (SELECT AVG(A.total) FROM (
+    SELECT D.numero_id, D.snombre, SUM(E.nsalario) as total
+    FROM empleados E JOIN departamentos D ON E.dpto_id=D.numero_id
+    GROUP BY D.numero_id ) A)
+
+CTE -- Common Table Expressions
+
+WITH promedio AS (SELECT AVG(A.total) FROM (
+        SELECT D.numero_id, D.snombre, SUM(E.nsalario) as total
+        FROM empleados E JOIN departamentos D ON E.dpto_id=D.numero_id
+        GROUP BY D.numero_id ) A)
+
+    SELECT D.numero_id, D.snombre, SUM(E.nsalario) as total
+    FROM empleados E JOIN departamentos D ON E.dpto_id=D.numero_id
+    GROUP BY D.numero_id
+    HAVING SUM(E.nsalario) > (SELECT * FROM promedio)
+
+
+---------------------------------------------------------------------------------------------------
+
+
+SQL Tipos de Personas
+CREATE VIEW tipopersonas AS(
+WITH todo_pacientes as(
+	SELECT * FROM pacientes
+	UNION
+	SELECT * FROM remotob.pacientes
+), todo_doctores AS(
+	SELECT * FROM doctores
+	UNION
+	SELECT * FROM remotob.doctores
+),
+
+ambos AS (
+	SELECT * FROM todo_pacientes P 
+	NATURAL JOIN todo_doctores D
+),
+
+solo_doctores AS(
+	SELECT * FROM todo_doctores 
+	WHERE codigo_id NOT IN(
+			SELECT codigo_id FROM todo_pacientes 
+		) 
+),
+
+solo_pacientes AS(
+	SELECT * FROM todo_pacientes 
+	WHERE codigo_id NOT IN(
+			SELECT codigo_id FROM todo_doctores
+		) 
+),
+
+solo_personas AS(
+	SELECT * FROM personas
+	WHERE codigo_id NOT IN( 
+		SELECT codigo_id FROM todo_pacientes
+		UNION
+		SELECT codigo_id FROM todo_doctores)
+)
+
+SELECT 'Ambos' AS tipo,codigo_id FROM ambos
+UNION
+SELECT 'Ninguno',codigo_id FROM solo_personas
+UNION
+SELECT 'Pacientes',codigo_id FROM solo_pacientes
+UNION
+SELECT 'Doctores',codigo_id FROM solo_doctores
+ORDER BY 1 ASC	)
+
+
+---------------------------------------------------------------------------------------------------
+
+
+EXPLAIN | VIEW
+Las vistas son consultas de uso frecuente que se pueden almacenar como tablas virtuales, por ejemplo:
+
+ CREATE VIEW lista_personas AS 
+ SELECT P.codigo_id,CONCAT_WS(' ',sapellido,snombre) as nombrec,
+   PA.codigo_id as cod_paciente,D.codigo_id as cod_doctor,
+   CASE WHEN PA.codigo_id IS NOT NULL AND D.codigo_id IS NOT NULL
+   THEN 'Ambos'
+   WHEN PA.codigo_id IS NOT NULL THEN 'Paciente'
+   WHEN D.codigo_id IS NOT NULL THEN 'Doctor'
+   ELSE 'Ninguno' END
+   FROM personas P
+ LEFT JOIN pacientes PA USING (codigo_id)
+ LEFT JOIN doctores D ON D.codigo_id=P.codigo_id;
+Se obtiene los datos de una vista de la misma forma que se obtienen de una tabla
+
+SELECT * FROM lista_personas;
+
+
+CON EXPLAIN ANALYZE SE VERIFICA EL TIEMPO DE EJECUCION DE LA CONSULTA
+
+explain analyze SELECT PA.codigo_id,concat_ws(' ',sapellido,snombre) as nombrec, 'PACIENTE'
+ FROM pacientes PA NATURAL JOIN personas P
+ LEFT JOIN doctores D ON PA.codigo_id=D.codigo_id
+ WHERE D.codigo_id IS NULL
+ UNION
+SELECT P.codigo_id,concat_ws(' ',sapellido,snombre) as nombrec, 'DOCTOR'
+ FROM doctores D NATURAL JOIN personas P
+ LEFT JOIN pacientes PA ON PA.codigo_id=D.codigo_id
+ WHERE PA.codigo_id IS NULL
+ UNION
+SELECT P.codigo_id,concat_ws(' ',sapellido,snombre) as nombrec, 'AMBOS'
+ FROM doctores D NATURAL JOIN pacientes PA
+ NATURAL JOIN personas P 
+UNION 
+ SELECT P.codigo_id,concat_ws(' ',sapellido,snombre) as nombrec, 'NINGUNO'
+ FROM personas P 
+ LEFT JOIN pacientes PA USING (codigo_id)
+ LEFT JOIN doctores D ON P.codigo_id=D.codigo_id
+ WHERE PA.codigo_id IS NULL AND D.codigo_id IS NULL
+
+
+---------------------------------------------------------------------------------------------------
+
+
+Estructura Base Procedimiento Almacenado
+
+CREATE OR REPLACE FUNCTION ins_empleado(
+	p_nombre text,	p_apellido text,	p_telefono text,	p_direccion text,
+	p_salario numeric(15,2),	p_dtnacimiento date,	p_departamento text
+) RETURNS void AS
+$$
+DECLARE
+	fragmento_dpto text := 'valor';
+	codigo_dpto int;
+	codigo text;
+BEGIN
+	SELECT UPPER(LEFT(snombre,3)),numero_id INTO fragmento_dpto,codigo_dpto FROM departamentos WHERE snombre = p_departamento;
+
+	SELECT UPPER(CONCAT_WS('-', fragmento_dpto, LEFT(p_apellido, 1)||LEFT(p_nombre, 1),
+        to_char(p_dtnacimiento, 'yy-mm-dd'))) INTO codigo;
+
+  INSERT INTO empleados VALUES((SELECT MAX(ci_id) FROM empleados)+1,p_nombre,p_apellido,null,p_direccion,p_telefono,p_salario,
+		p_dtnacimiento,null,codigo_dpto,codigo);
+	
+END;
+$$
+LANGUAGE plpgsql;
+
+
+
+
+CREATE OR REPLACE FUNCTION ins_doctor(
+	p_codigo_id text,
+	p_nombre text,
+	p_apellido text,
+	p_telefono text,
+	p_direccion text,
+	p_especialidad text,
+	p_salario numeric(15,2)
+	) RETURNS void AS
+$BODY$
+BEGIN
+	INSERT INTO personas VALUES (p_codigo_id, p_nombre, p_apellido, p_telefono,
+		p_direccion,current_timestamp);
+	INSERT INTO doctores VALUES (p_codigo_id, p_especialidad, p_salario, true);
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+SELECT ins_doctor('20200928-PT','Prueba','Test','12345','Av. Banzer','Cardiologo',3800);
+
+
+-- GENERAR UNA FUNCION O PROCEDIMIENTO ALMACENADO
+-- QUE REGISTRE UNA CONSULTA REALIZADA, INDICANDO EL NOMBRE COMPLETO DEL PACIENTE,
+-- EL NOMBRE COMPLETO DEL DOCTOR, JUNTO AL NOMBRE DE LA CLINICA
+CREATE OR REPLACE FUNCTION ins_consulta(
+	p_paciente text,
+	p_doctor text,
+	p_clinica text
+	) RETURNS VOID AS
+$$
+DECLARE
+	v_paciente text;
+	v_doctor text;
+	v_clinica int;
+BEGIN
+	SELECT codigo_id INTO v_clinica FROM clinicas WHERE snombre = p_clinica;
+
+	SELECT codigo_id INTO v_paciente FROM personas WHERE snombre = SPLIT_PART(p_paciente,' ',1) 
+	AND sapellido = SPLIT_PART(p_paciente,' ',2);
+	IF (v_paciente no existe en la tabla pacientes)
+	
+
+	SELECT codigo_id INTO v_doctor FROM personas WHERE snombre = SPLIT_PART(p_doctor,' ',1) 
+	AND sapellido = SPLIT_PART(p_doctor,' ',2);
+
+	INSERT INTO consultas VALUES ((SELECT MAX(codigo_id) FROM consultas)+1,v_clinica, v_doctor, v_paciente, current_timestamp);
+END;
+$$
+LANGUAGE plpgsql;
+
+
+---------------------------------------------------------------------------------------------------
+
+
+Restriccion Check + SP Paciente y Doctor
+--2. Validación de grupo sanguineo
+
+alter table pacientes add constraint check_sangre check(UPPER(gsangre) in ('A+','A-','B+','B-','AB-','AB+','O+','O-'))
+
+--3. Registro de doctores
+
+create or replace procedure ins_paciente (
+	p_codigo_id text, p_nombre text, p_apellido text, p_telefono text, p_sangre text
+) as
+$BODY$
+begin
+	insert into personas VALUES(p_codigo_id,p_nombre,p_apellido,p_telefono,null);
+	insert into pacientes values (p_codigo_id, UPPER(p_sangre));
+END
+$BODY$
+language plpgsql;
+
+create or replace procedure ins_doctor (
+	p_codigo_id text, p_nombre text, p_apellido text, p_telefono text, p_especialidad text, p_salario numeric
+) as
+$BODY$
+begin
+	insert into personas VALUES(p_codigo_id,p_nombre,p_apellido,p_telefono,null);
+	insert into doctores values (p_codigo_id, p_especialidad, p_salario, true);
+END
+$BODY$
+language plpgsql;
+
+call ins_paciente('test','paciente','prueba','12345','b+');
+select * from pacientes p2 
+
+
+---------------------------------------------------------------------------------------------------
+
+
+SP - Insertar Consultas + Pacientes
+CREATE OR REPLACE FUNCTION insert_consulta(clinica_id text, doctor_id text,
+paciente_id text) RETURNS void as
+$BODY$
+DECLARE
+codiguitoDoc text;
+codiguitoPac text;
+BEGIN
+select codigo_id into codiguitoDoc from personas where snombre = split_part(doctor_id, ' ', 1)
+and sapellido = split_part(doctor_id, ' ', 2);
+
+select codigo_id into codiguitoPac from personas where snombre = split_part(paciente_id, ' ', 1)
+and sapellido = split_part(paciente_id, ' ', 2);
+
+insert into consultas values(51,clinica_id::int,codiguitoDoc,codiguitoPac,now()::date);
+END
+$BODY$
+LANGUAGE plpgsql;
+
+---- =================================================================================================================== ----
+
+CREATE OR REPLACE FUNCTION ins_paciente (
+	p_nombre text, 	p_apellido text, 
+	p_telefono text, 	p_sangre text, p_dtnacimiento date
+) RETURNS void AS
+$BODY$
+DECLARE 
+		v_codigo text;
+
+BEGIN
+	SELECT UPPER(concat(to_char(p_dtnacimiento, 'yyyymmdd'),'-', 
+					LEFT(p_nombre,1),LEFT(p_apellido,1))) INTO v_codigo;
+	INSERT INTO personas VALUES(v_codigo, p_nombre, p_apellido, p_telefono,
+			null,p_dtnacimiento,current_timestamp, null);
+	INSERT INTO pacientes VALUES(v_codigo, UPPER(p_sangre));
+END
+$BODY$
+LANGUAGE plpgsql;
+
+
+---------------------------------------------------------------------------------------------------
+
+
+Extracción de Fecha (CASE)
+Consulta CASE 1:
+
+-- codigo, nombre completo, especialidad, salario , estado (si,no | activo, inactivo)
+
+select codigo_id , snombre ||' '||sapellido, d.sespecialidad ,d.nsalario ,
+case d.bactivo when true then 'si' when false then 'no' end,
+-- case when d.bactivo = true then 'si' when bactivo = false then 'no' end
+from personas natural join doctores d
+
+Extracción de fecha + CASE :
+
+-- mostrar la lista de personas registradas, indicando su fecha de nacimiento  
+-- en lo posible e indicando si es mayor de edad, menor de edad o sin especificar
+
+WITH personas_edad AS (
+	SELECT codigo_id, 
+	age(CONCAT(substring(codigo_id,1,4),
+		   CASE WHEN substring(codigo_id,5,1)::int > 1 THEN '0' ELSE substring(codigo_id,5,1) END,
+		   substring(codigo_id,6,1),substring(codigo_id,7,2))::date ) as edad
+	FROM personas
+)
+SELECT codigo_id, CASE WHEN edad >= '18 years' THEN 'Mayor de Edad' WHEN edad < '18 years' THEN 'Menor de Edad' ELSE 'Sin especificar' END
+FROM personas_edad order by 2 asc
+
+
+---------------------------------------------------------------------------------------------------
+
+
+SP - Condicional IF
+CREATE OR REPLACE FUNCTION public.mk_doctor(
+    p_codigo_id text,    p_nombre text,    p_apellido text,
+    p_telefono text,    p_direccion text,    p_especialidad text,
+    p_salario numeric)
+  RETURNS void AS
+$BODY$
+BEGIN
+	-- Verificar si existe el registro
+	IF NOT EXISTS(SELECT * FROM personas WHERE codigo_id = p_codigo_id) THEN
+		--insertar
+		SELECT ins_doctor(p_codigo_id , p_nombre , p_apellido , p_telefono , p_direccion , p_especialidad , p_salario);
+	ELSE
+		--actualizar
+		SELECT upd_doctor(p_codigo_id , p_nombre , p_apellido , p_telefono , p_direccion , p_especialidad , p_salario);
+	END IF;
+END;
+$BODY$
+  LANGUAGE plpgsql ;
+
+
+---------------------------------------------------------------------------------------------------
+
+
+Bucle LOOP
+Mostrar resultados por mensaje
+
+CREATE OR REPLACE FUNCTION public.bucle(p_limite integer)
+  RETURNS integer AS
+$BODY$
+DECLARE
+	v_int int := 1;
+	v_resultado text := '';
+BEGIN
+	LOOP 
+		EXIT WHEN v_int > p_limite;
+		RAISE NOTICE 'Nro: %', v_int;
+		v_int := v_int +1;
+	END LOOP;
+	RETURN v_int;
+END
+$BODY$
+  LANGUAGE plpgsql;
+Mostrar resultados en una lista
+
+CREATE OR REPLACE FUNCTION public.bucle2(p_limite integer)
+  RETURNS SETOF integer AS
+$BODY$
+DECLARE
+	v_int int := 1;
+	v_resultado text := '';
+BEGIN
+	LOOP 
+		EXIT WHEN v_int > p_limite;
+		RAISE NOTICE 'Nro: %', v_int;
+		RETURN NEXT v_int;
+		v_int := v_int +1;
+	END LOOP;
+END
+$BODY$
+  LANGUAGE plpgsql;
+Mostrar resultados concatenados
+
+CREATE OR REPLACE FUNCTION public.bucle3(p_limite integer)
+  RETURNS text AS
+$BODY$
+DECLARE
+    v_int int := 1;
+    v_resultado text :='';
+BEGIN
+    LOOP
+        EXIT WHEN v_int > p_limite;
+        -- RAISE NOTICE 'Nro: %', v_int;
+        v_resultado := v_resultado || ',' || v_int;
+        v_int := v_int + 1;
+    END LOOP;
+    RAISE NOTICE 'largo %',length(v_resultado);
+    RAISE NOTICE 'resultado: %', v_resultado;
+    --RETURN SUBSTRING(v_resultado from 2 for length(v_resultado));
+    RETURN RIGHT(v_resultado,length(v_resultado)-1);
+END
+$BODY$
+  LANGUAGE plpgsql;
+
+
+---------------------------------------------------------------------------------------------------
+
+
+Módulo pgcrypto
+Para poder cargar un módulo en PostgreSQL, utilizamos el siguiente comando:
+
+create extension pgcrypto
+Al momento de registrar o cambiar una contraseña debemos utilizar el comando crypt, indicando el tipo de sal a utilizar:
+
+update personas set spassword = crypt('hola mundo', gen_salt('bf')) where codigo_id = '19920922-DM'
+Siempre que se compara una contraseña para realizar el proceso de autenticación se debe comparar con la sal generada en el campo:
+
+select * from personas p where spassword =  crypt('hola mundo', spassword )
+
+
+---------------------------------------------------------------------------------------------------
+
+
+Bucle FOR
+FOR - RANGO
+
+CREATE OR REPLACE FUNCTION bucle(int)
+RETURNS TEXT AS 
+$$
+DECLARE
+	limite INT := $1;
+	contador INT := 1;
+BEGIN
+	FOR contador IN 1..10 LOOP
+		IF contador % 2 = 0 THEN
+			RAISE NOTICE 'Nro. %',contador;
+		END IF;
+	END LOOP;
+END;
+$$
+LANGUAGE plpgsql;
+FOR - CONSULTA
+CREATE OR REPLACE FUNCTION compatibilidad(p_codigo TEXT)
+RETURNS TEXT AS 
+$$
+DECLARE
+	fila RECORD;
+	resultado TEXT :='';
+	v_sangre TEXT;
+BEGIN
+	SELECT gsangre INTO v_sangre FROM pacientes WHERE codigo_id = p_codigo;
+	FOR fila IN SELECT * FROM pacientes ORDER BY 1 LOOP
+		IF fila.gsangre = v_sangre AND fila.codigo_id <> p_codigo THEN
+			resultado := resultado || fila.codigo_id || ', ';
+		END IF;
+	END LOOP;
+	RETURN resultado;
+END;
+$$
+LANGUAGE plpgsql;
+
+SELECT compatibilidad('19791001-JQ');
+
+SELECT *,compatibilidad(codigo_id) FROM personas;
+
+
+--------------------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION insert_hrs_empleado(
+e_id text, pro_id integer, hrs integer)
+RETURNS void AS
+$BODY$
+BEGIN
+IF (select sum(ihoras) from trabajos where empleado_id = e_id) < 50 THEN
+update trabajos set ihoras = ihoras + hrs where empleado_id = e_id and proyecto_id = pro_id;
+END IF;
+END;
+$BODY$
+LANGUAGE plpgsql ;
+
+
+--------------------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION ins_doctor(
+p_codigo_id text,
+p_nombre text,
+p_apellido text,
+p_telefono text,
+p_direccion text,
+p_especialidad text,
+p_gsangre text,
+p_salario numeric(15,2)
+) RETURNS void AS
+$BODY$
+BEGIN
+IF p_especialidad = 'doctor' then
+IF NOT EXISTS(SELECT * FROM personas WHERE codigo_id = p_codigo_id) THEN
+INSERT INTO personas VALUES (p_codigo_id, p_nombre, p_apellido, p_telefono,
+p_direccion,current_timestamp);
+INSERT INTO doctores VALUES (p_codigo_id, p_especialidad, p_salario, true);
+ELSE
+UPDATE personas SET snombre = p_nombre, sapellido = p_apellido, stelefono = p_telefono,
+sdireccion = p_direccion, fecha_nacim = current_timestamp WHERE codigo_id = p_codigo_id;
+UPDATE doctores SET sespecialidad = p_especialidad, nsalario = p_salario, bactivo = 'true' WHERE codigo_id = p_codigo_id;
+END IF;
+ELSE
+IF NOT EXISTS(SELECT * FROM personas WHERE codigo_id = p_codigo_id) THEN
+INSERT INTO personas VALUES (p_codigo_id, p_nombre, p_apellido, p_telefono,
+p_direccion,current_timestamp);
+INSERT INTO pacientes VALUES (p_codigo_id,p_gsangre);
+ELSE
+UPDATE personas SET snombre = p_nombre, sapellido = p_apellido, stelefono = p_telefono,
+sdireccion = p_direccion, fnacimiento = current_timestamp WHERE codigo_id = p_codigo_id;
+UPDATE cliniaa.pacientes SET gsangre = p_gsangre WHERE codigo_id = p_codigo_id;
+END IF;
+END IF;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+
+---------------------------------------------------------------------------------------------------
+
+
+create or replace function ins_consulta(clinica_id text, doctor_id text,
+paciente_id text
+)RETURN void as
+$BODY$
+begin
+insert into consultas values(default,clinica_id,doctor_id,paciente_id,now()::date);
+end
+$BODY$
+language plpgsql;
+
+
+create or replace function ins_consulta(clinica_id text, doctor_id text,
+paciente_id text)RETURN void as
+$BODY$
+DECLARE
+codiguitoDoc text;
+codiguitoPac text;
+begin
+select codigo_id from personas where snombre = split_part(doctor_id, ' ', 1)
+and sapellido = split_part(doctor_id, ' ', 2)
+into codiguitoDoc
+select codigo_id from personas where snombre = split_part(doctor_id, ' ', 1)
+and sapellido = split_part(doctor_id, ' ', 2)
+into codiguitoPac
+insert into consultas values(default,clinica_id,codiguitoDoc,codiguitoPac,now()::date);
+end
+$BODY$
+language plpgsql;
+
+
+---------------------------------------------------------------------------------------------------
+
+
+select F.snombre as Clinica,concat(Q.snombre,' ',Q.sapellido) as Nombre,count(D.codigo_id)as Pacientes_atendidos
+from doctores D left join consultas S on D.codigo_id = S.doctor_id
+left join clinicas F on F.codigo_id = S.codigo_id
+join personas Q on Q.codigo_id = D.codigo_id group by F.snombre,Q.snombre,Q.sapellido
+
+
+---------------------------------------------------------------------------------------------------
+
+
+select
+case when Pa.codigo_id = B.codigo_id then 'ambos'
+from personas Pa, (select * from personas Pe join doctores D on Pe.codigo_id = D.codigo_id join pacientes Pa
+on Pe.codigo_id = Pa.codigo_id) B
+
+
+select
+case when (
+p.codigo_id in (select codigo_id from doctores d) then 'doctores'
+else 'pacientes') end
+from personas p
+
+
+select
+case when Pa.codigo_id in (select Pe.codigo_id from personas Pe join
+doctores D on Pe.codigo_id = D.codigo_id join pacientes Pa
+on Pe.codigo_id = Pa.codigo_id) then 'ambos'
+when Pa.codigo_id in (select Pe.codigo_id from personas Pe join doctores D on Pe.codigo_id = D.codigo_id)
+then 'doctores'
+when Pa.codigo_id in (select Pe.codigo_id from personas Pe join pacientes D on Pe.codigo_id = D.codigo_id)
+then 'pacientes'
+else 'ninguno'
+end, Pa.*
+from personas Pa
+
+
+---------------------------------------------------------------------------------------------------
+
+
+select upper(left(D.snombre,3))||'-'||left(E.snombre,1)||left(E.sappaterno,1)
+||'-'||substring(to_char(E.dtnacimiento, 'YYYY-MM-DD'),3,2)||
+substring(to_char(E.dtnacimiento, 'YYYY-MM-DD'),5,3)
+||substring(to_char(E.dtnacimiento, 'YYYY-MM-DD'),8,3)
+from empleados E join departamentos D on E.dpto_id = D.numero_id
+
+
+-- inicio de script
+
+alter table empleados
+drop constraint empleados_supervisor_id_fkey;
+
+alter table empleados
+alter column supervisor_id type text;
+
+alter table familiares
+drop constraint familiares_empleado_id_fkey;
+
+alter table familiares
+alter column empleado_id type text;
+
+alter table trabajos
+drop constraint trabajos_empleado_id_fkey;
+
+alter table trabajos
+alter column empleado_id type text;
+
+alter table departamentos
+drop constraint departamentos_admin_id_fkey;
+
+alter table departamentos
+alter column admin_id type text;
+
+alter table empleados
+alter column ci_id type text;
+
+alter table empleados
+add foreign key (supervisor_id) references empleados(ci_id) on update cascade;
+
+alter table familiares
+add foreign key (empleado_id) references empleados(ci_id) on update cascade on delete cascade;
+
+alter table trabajos
+add foreign key (empleado_id) references empleados(ci_id) on update cascade on delete cascade;
+
+alter table departamentos
+add foreign key (admin_id) references empleados(ci_id) on update cascade on delete set null;
+
+select * from empleados;
+
+
+---------------------------------------------------------------------------------------------------
+
+
+SELECT nempleado, MIN(nsalario)
+FROM empleados WHERE nsalario <= 18.727 --(SELECT MIN(nsalario) from empleados);
+GROUP BY nempleado;
+
+
+select snombre,nsalario from empleados where nsalario < 2122;
+
+
+---------------------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION mk_todo(
+p_codigo_id text,
+p_nombre text,
+p_apellido text,
+p_telefono text,
+p_direccion text,
+p_especialidad text,
+p_gsangre text,
+p_salario numeric(15,2)
+) RETURNS void AS
+$BODY$
+BEGIN
+IF p_especialidad IS NOT NULL THEN
+RAISE NOTICE 'registrando datos doctor';
+IF NOT EXISTS(SELECT * FROM personas WHERE codigo_id = p_codigo_id) THEN
+INSERT INTO personas VALUES (p_codigo_id, p_nombre, p_apellido, p_telefono,
+p_direccion,current_timestamp);
+INSERT INTO doctores VALUES (p_codigo_id, p_especialidad, p_salario, true);
+ELSE
+UPDATE personas SET snombre = p_nombre, sapellido = p_apellido, stelefono = p_telefono,
+sdireccion = p_direccion WHERE codigo_id = p_codigo_id;
+UPDATE doctores SET sespecialidad = p_especialidad, nsalario = p_salario, bactivo = 'true' WHERE codigo_id = p_codigo_id;
+END IF;
+END IF;
+IF p_gsangre IS NOT NULL THEN
+RAISE NOTICE 'registrando datos paciente';
+IF NOT EXISTS(SELECT * FROM personas WHERE codigo_id = p_codigo_id) THEN
+INSERT INTO personas VALUES (p_codigo_id, p_nombre, p_apellido, p_telefono,
+p_direccion,current_timestamp);
+INSERT INTO pacientes VALUES (p_codigo_id,p_gsangre);
+ELSE
+UPDATE personas SET snombre = p_nombre, sapellido = p_apellido, stelefono = p_telefono,
+sdireccion = p_direccion WHERE codigo_id = p_codigo_id;
+UPDATE pacientes SET gsangre = p_gsangre WHERE codigo_id = p_codigo_id;
+END IF;
+END IF;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+
+--------------------------------------------------------------------------------------------------
+
+
+select * from usuarios
+
+-- Crear una función que genere un código único para los usuarios basándose en la fecha
+-- y hora de creación del usuario según el siguiente formato:
+-- Últimos dos dígitos del año - tres primeras letras del nickname - dos dígitos de mes -
+-- inicial del nombre - dos dígitos de día - inicial de apellido
+--ejemplo, registro 1 ---> “19-ROO-05-R-26-R”
+
+create or replace function generar_codigo(
+	p_fecha date,
+	p_nickanme text,
+	p_nombre text,
+	p_dia date,
+	p_apellido text
+	) returns text as 
+$$
+declare 
+	v_resultado text;
+
+begin 	
+	select UPPER(concat( to_char(p_fecha,'YY'), '-', 
+	left(p_nickname,3),'-', to_char(p_fecha,'MM'),'-', 
+	left(p_nombre,1),'-', to_char(p_fecha,'DD'), left(p_apellido,1))) 
+	into v_resultado;
+	
+	return v_resultado;
+end;
+$$
+language plpgsql;
+
+-- Crear un procedimiento almacenado (SP) para registrar o actualizar un usuario bajo las
+-- siguientes condiciones:
+-- a. Si el código existe, actualizar los datos exceptuando el nickname y la fecha de
+-- creación.
+-- b. S el código no existe, registrar el usuario verificando que no exista ese nickname,
+-- en caso de existir, enviar una excepción indicando que el nombre de usuario ya
+-- se encuentra en uso.
+-- En ambos casos la contraseña se deberá encontrar encriptada.
+
+
+-- INSERT INTO Usuarios VALUES ('19-ROO-05-R-26-R','root','root','root','root','root@nur.edu','20190526',false),
+
+
+create or replace function update_user(
+	p_codigo_id text,    p_nickname text, p_password text,
+    p_nombre text,    p_email text, p_dtcreacion date, p_activo boolean) 
+	returns void as 
+$$
+begin 	
+	update usuarios
+	set codigo_id = p_codigo_id,
+		snickname = p_nickname,
+		spassword = p_password,
+		snombre = p_nombre,
+		sapellido = p_apellido,
+		email = p_email,
+		fecha_creacion = p_dtcreacion,
+		activo = p_activo
+	where p_codigo_id = codigo_id;
+end;
+$$
+language plpgsql;
+--------------------------------------------------------
+create extension pgcrypto;
+		
+CREATE OR REPLACE FUNCTION registrar_update(
+    p_codigo_id text,    p_nickname text, p_password text,
+    p_nombre text,    p_email text, p_dtcreacion date, p_activo boolean)
+  RETURNS void AS
+$BODY$
+BEGIN
+	IF NOT EXISTS(SELECT * FROM usuarios WHERE codigo_id = p_codigo_id) THEN
+		INSERT INTO usuario VALUES (p_codigo_id, p_nickname, p_password, p_snombre,p_apellido, p_email, p_dtcreacion, p_activo);
+		update usuarios set spassword = crypt(p_password, gen_salt('bf')) where codigo_id = p_codigo_id;
+		
+	ELSE
+		SELECT update_user(p_codigo_id,p_nickname, p_password, p_nombre ,p_email , p_dtcreacion, p_activo);
+		update usuarios set spassword = crypt(p_password, gen_salt('bf')) where codigo_id = p_codigo_id;
+	END IF;
+END;
+$BODY$
+  LANGUAGE plpgsql ;
+  
+-- Crear una función de autenticar usuarios ingresando el usuario y la contraseña, la
+-- función deberá verificar si el usuario existe y se encuentra activo
+
+-- a. Si los parámetros son correctos indicar que el inicio de sesión fue exitoso y
+-- registrar 'acceso' en la tabla “login_logs” junto a los campos requeridos.
+
+-- b. En caso que los datos sean correctos pero el usuario este inactivo se deberá
+--registrar en la tabla “login_logs” el valor 'disabled'.
+
+-- . Si los datos son incorrectos registrar 'error' .
+-- los últimos dos casos la función deberá enviar una excepción indicando que el usuario
+-- estaa inactivo o que los datos son erróneos
+select * from login_logs
+
+CREATE OR REPLACE FUNCTION login(
+     p_codigo_id text, p_nickname text, p_password text)
+  RETURNS void AS
+$BODY$
+BEGIN
+	-- Verificar si existe el registro
+	IF NOT EXISTS(SELECT * FROM usuarios WHERE p_nickname = snickname) THEN
+	RAISE EXCEPTION 'EL usuario no existe'
+		 USING HINT = 'Porfavor revisa los datos que ingresaste';
+	
+	ELSE
+		INSERT INTO login_logs VALUES (current_date,p_nickname,'Acceso');
+		RAISE NOTICE 'EL usuario Ingresó correctamente';
+	END IF;
+	
+	IF (SELECT * FROM usuarios WHERE p_nickname = snickname AND activo = false) THEN
+		INSERT INTO login_logs VALUES (current_date,p_nickname,'Disabled');
+		RAISE EXCEPTION 'Los datos son correctos pero el usuario está inactivo'
+		 USING HINT = 'Porfavor verifica el usuario que ingresaste';
+	END IF;
+	
+IF (SELECT * FROM usuarios WHERE p_nickname = snickname AND p_password <> spassowrd) THEN
+		INSERT INTO login_logs VALUES (current_date,p_nickname,'Error');
+		RAISE EXCEPTION 'el usuario y/o contraseña no coinciden'
+		 USING HINT = 'Porfavor revisa los datos que ingresaste';
+		
+	END IF;
+END;
+$BODY$
+  LANGUAGE plpgsql;

@@ -1,0 +1,48 @@
+-- Consulta #1
+create or replace function generar_codigo(
+	u_fecha date,
+	u_nickname text,
+	u_nombre text,
+	u_apellido text
+) returns text as
+$$
+DECLARE
+	v_resultado text;
+begin
+	select UPPER(concat( to_char(u_fecha,'yy'), '-', left(u_nickname,3),'-', to_char(u_fecha,'mm'),'-',
+				left(u_nombre,1),'-',to_char(u_fecha,'dd'),'-', left(u_apellido,1) )) into v_resultado;
+	return v_resultado;
+end;
+$$
+language plpgsql
+
+-- Consulta #2
+
+create or replace function reg_us(
+	u_nickname text,
+	u_spassword text,
+	u_snombre text,
+	u_sapellido text,
+	u_email text,
+	u_fechaCreacion date,
+	u_activo boolean
+) returns void as
+$$
+Declare
+	u_codigo text := generar_codigo(u_fechaCreacion, u_nickname, u_snombre, u_sapellido);
+begin
+	if exists(select * from usuarios where codigo_id = u_codigo) then
+		--actualizar
+		update usuarios set spassword = crypt(u_spassword, gen_salt('bf')), snombre = u_snombre,
+		sapellido = u_sapellido, email = u_email, activo = u_activo where codigo_id = u_codigo;
+	else
+		--insertar
+		if not exists(select * from usuarios where snickname = u_nickname) then
+			insert into usuarios values(u_codigo, u_nickname, crypt(u_spassword, gen_salt('bf')), u_snombre, u_sapellido, u_email, u_fechaCreacion, u_activo);
+		else
+			raise exception 'El nickName ya esta en uso';
+		end if;
+	end if;
+end;
+$$
+language plpgsql

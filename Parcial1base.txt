@@ -1,0 +1,36 @@
+--Crear un usuario con la inicial de su nombre y su apellido completo. Este usuario
+--deberá tener acceso solamente desde el equipo en el que se encuentra con todos los
+--permisos asignados.
+create user ERojas password '2424';
+GRANT INSERT, SELECT, UPDATE ON ALL TABLES IN SCHEMA PUBLIC TO invitado;
+-- Crear un usuario “invitado” que solamente pueda acceder a la información, sin poder
+--crear o modificar ningún registro o elemento en el DBMS, este podrá acceder desde
+--cualquier IP
+create user invitado password '2424';
+create extension postgres_fdw;
+--Crear un esquema “remoto” en la base de datos “Principal” y realizar todo el
+---procedimiento necesario para poder importar como tablas foráneas las tablas
+--tblCliente, tblProducto, tblVenta_Compra y tblProducto_venta.
+create schema remoto;
+IMPORT FOREIGN SCHEMA public
+FROM SERVER P1_remoto 
+INTO remoto;
+create server svr_remoto FOREIGN DATA 
+WRAPPER postgres_fdw options (host '127.0.0.1', port '5432', dbname 'P1');
+create user mapping for postgres server svr_remoto options (user'ERojas', password '2424');
+--Indicar la ubicación de donde se encuentran las bases de datos de PostgreSQL
+C:/Program files/PostgreSQL/13/data show data_directory;
+-- Explicar la diferencia entre base de datos centralizada y distribuida
+En una centralizada todos los datos se almacenan en un solo lugar, puede ser en la pc central o un servidor.
+En una distribuida los datos se almacenan en dispositivos de almacenimiento ubicados en diferentes ubicaciones físicas.
+--Indicar que tipo de bases de datos distribuidas existen
+homogeneas y heteregeneas
+--- Indicar la diferencia entre un respaldo caliente y uno frio
+El frio es que puedes copiarlo en cualquier usb y el respaldo caliente es una copia de seguridad realizada en los datos a pesar de que están accesibles de manera activa a los usuarios y pueden estar actualmente en estado de actualización.
+
+--Crear una consulta SQL que obtenga el total de ventas realizadas por producto (incluir
+--los productos que no tuvieron ninguna venta con el valor 0). La consulta deberá indicar
+--el tipo y nombre del producto junto a la cantidad de ventas
+
+Select sexo, sum(codigo_venta), sum(codigo_producto)
+from tblCliente, tblproducto_venta group by sexo;

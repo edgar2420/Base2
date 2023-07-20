@@ -1,0 +1,52 @@
+create table usuarios(
+	user_id int default 1 primary key,
+	nick text unique,
+	pass text
+);
+create SEQUENCE secuencia
+START 1
+INCREMENT 2
+MINVALUE 1
+OWNED BY usuarios.user_id;
+
+select currval('secuencia'); 
+select nextval('secuencia');
+
+insert into usuarios values(nextval('secuencia'),'dssqhhaniel',crypt('hola',gen_salt('bf')));
+select * from usuarios
+
+create extension pgcrypto
+select insert_empleados('hanielhb','123456')
+create or replace function insert_empleados(
+	p_nick text,
+	p_pass text
+) returns void as
+$BODY$
+BEGIN
+	-- Verificar si existe el registro
+	IF NOT EXISTS(select pass = crypt(lower(concat(left(nick,1),user_id)),pass)as contra from usuarios where nick = p_nick) THEN
+		--insertar
+		insert into usuarios values(nextval('secuencia'),p_nick,crypt(p_pass,gen_salt('bf')));	
+	ELSE
+		update usuarios set pass = crypt(lower(concat(left(nick,1),user_id)),gen_salt('bf')) where nick = p_nick;
+	END IF;
+END;
+$BODY$
+  LANGUAGE plpgsql ;
+---login
+select login_user('hanielhb','123456')
+create or replace function login_user(
+	p_nick text,
+	p_pass text
+)RETURNS void AS
+$$
+BEGIN
+	if (SELECT (pass = crypt (p_pass,pass)) AS autentificacion 
+	FROM usuarios where nick = p_nick) then
+		raise notice 'entro';
+	ELSE
+		raise notice 'no entro';
+	END IF;
+END;
+$$
+LANGUAGE plpgsql;

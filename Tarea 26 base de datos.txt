@@ -1,0 +1,289 @@
+--consultas de base de datos proyecto
+--1
+select * from usuario
+select id_ci, nombre, nacimiento, telefono, correo from usuario 
+where correo= 'edgarrojas082@gmail.com'
+---------------------------------------------------------------------------
+--2
+select * from conductor
+select nombre from usuario 
+where nombre= 'edgar' or nombre= 'edgar'
+-------------------------------------------------------------------------------
+--3
+SELECT servicio_id, tipo, costo
+FROM servicio
+WHERE (costo > 50 AND costo < 100) or costo <200;
+-----------------------------------------------------------------------------
+--4
+SELECT * 
+FROM usuario U
+JOIN conductor C
+ON U.id_ci = C.usuario_id
+------------------------------------------------------------------------------
+--5
+SELECT * FROM usuario LEFT JOIN conductor ON usuario.id_ci = conductor.usuario_id;
+
+-----------------------------------------------------------------------------------
+--6
+ select servicio_id, avg(costo) from servicio
+  group by servicio_id
+-------------------------------------------------------------------------------------
+--7
+ select tipo, count(*)
+  from servicio
+  where costo<100
+  group by tipo;
+ ------------------------------------------------------------------------------------
+--8
+ select tipo, avg(costo) from servicio
+  group by tipo
+  having avg(costo)>25;
+  -----------------------------------------------------------------------------------
+  --9
+  select tipo, count(*) from servicio
+  group by tipo
+  having tipo<>'Express';
+  -----------------------------------------------------------------------------------
+  --10 
+  select tipo, count(*) from servicio
+  where costo is not null
+  group by tipo
+  having tipo<>'Por hora';
+  -------------------------------------------------------------------------------------
+ --11
+ select id_ci, nombre, nacimiento, 
+       (select (usuario.nombre ||' '|| usuario.nacimiento) as tipo_usuario 
+        from usuario where id_ci = nombre), nombre
+from usuario;
+---------------------------------------------------------------------------------------
+--12
+ select * from servicio
+  where not tipo='Express';
+---------------------------------------------------------------------------------------
+--13
+SELECT * FROM servicio
+WHERE costo NOT IN (200);
+---------------------------------------------------------------------------------------
+--14
+CREATE OR REPLACE FUNCTION validar_clientes()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF NEW.sexo IS NULL THEN
+	raise exception 'El sexo no puede ser nulo';
+	END IF;
+	
+	IF NEW.correo !~* '^([A-Z]{1}[a-zñáéíóú]+[\s]*)+$' THEN
+	raise exception 'Solo se pueden introducir letras en el nombre';
+	END IF;
+	IF NEW.nacimiento IS NULL THEN
+	raise exception 'fecha de nacimiento no puede ser nulo';
+	END IF;
+	RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+-------------------------------------------------------------------------------------
+--15
+CREATE OR REPLACE FUNCTION insert_conductor(
+	p_usuarioId text,
+	p_placa text,
+	p_brevete int,
+	p_categoria text
+)returns void as
+$BODY$
+BEGIN
+	if exists(select * from conductor where usuario_id = p_usuarioId ) then
+		--actualizar
+		update conductor set brevete = p_brevete, categoria = p_categoria
+		where usuario_id = p_usuarioId;
+	elsif not exists(select * from conductor where usuario_id = p_usuarioId) then
+			insert into conductor values(Default,p_usuarioId,p_placa,p_brevete,p_categoria);
+	end if;
+END;
+$BODY$
+LANGUAGE plpgsql;
+----------------------------------------------------------------------------------------------------
+--16
+CREATE OR REPLACE FUNCTION validar_usuario()
+RETURNS TRIGGER AS
+$$
+BEGIN
+
+	IF NEW.id IS NULL THEN
+		RAISE EXCEPTION 'El ci no puede ser nulo';
+	END IF;
+	IF NEW.nombre !~* '^([A-Z]{1}[a-zñáéíóúÑÁÉÍÓÚ]+[\s]*)+$' THEN
+		RAISE EXCEPTION 'Solo se pueden introducir letras en este campo';
+	END IF;
+	IF NEW.telefono IS NULL THEN
+		RAISE EXCEPTION 'El telefono no puede ser nulo';
+	END IF;
+
+RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+----------------------------------------------------------------------------------------------
+--17
+CREATE TRIGGER validar_usuario
+BEFORE INSERT OR UPDATE ON usuario
+FOR EACH ROW
+EXECUTE PROCEDURE validar_usuario();
+-----------------------------------------------------------------------------------------------
+--18
+CREATE OR REPLACE FUNCTION ins_camion(
+r_placa text,
+r_ruat text,
+r_modelo text,
+r_marca text,
+r_color text
+) RETURNS void AS
+$BODY$
+BEGIN
+
+
+
+IF EXISTS(SELECT * FROM camion WHERE placa = r_placa) THEN
+update camion set ruat = r_ruat, modelo = r_modelo, marca = r_marca,
+color = r_color where placa = r_placa;
+
+elsif NOT EXISTS(SELECT * FROM camion WHERE placa = r_placa) THEN
+INSERT INTO camion VALUES(r_placa, r_ruat, r_modelo, r_marca, r_color);
+END IF;
+END;
+$BODY$
+LANGUAGE plpgsql;
+--------------------------------------------------------------------------------------------------
+--19
+CREATE OR REPLACE FUNCTION validar_usuario()
+RETURNS TRIGGER AS
+$$
+BEGIN
+
+	IF NEW.id IS NULL THEN
+		RAISE EXCEPTION 'El ci no puede ser nulo';
+	END IF;
+	IF NEW.nombre !~* '^([A-Z]{1}[a-zñáéíóúÑÁÉÍÓÚ]+[\s]*)+$' THEN
+		RAISE EXCEPTION 'Solo se pueden introducir letras en este campo';
+	END IF;
+	IF NEW.telefono IS NULL THEN
+		RAISE EXCEPTION 'El telefono no puede ser nulo';
+	END IF;
+
+RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql
+----------------------------------------------------------------------------------------------------
+--20
+CREATE OR REPLACE FUNCTION validar_clientes()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF NEW.sexo IS NULL THEN
+	raise exception 'El sexo no puede ser nulo';
+	END IF;
+	
+	IF NEW.correo !~* '^([A-Z]{1}[a-zñáéíóú]+[\s]*)+$' THEN
+	raise exception 'Solo se pueden introducir letras en el nombre';
+	END IF;
+	IF NEW.nacimiento IS NULL THEN
+	raise exception 'fecha de nacimiento no puede ser nulo';
+	END IF;
+	RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+------------------------------------------------------------------------------------------
+--21
+CREATE TABLE conductor_logs(
+log_id SERIAL NOT NULL PRIMARY KEY,
+dtOperacion date,
+ci_id INT,
+usuario VARCHAR(6),
+nombre VARCHAR(30) NOT NULL,
+apellido VARCHAR(30) NOT NULL
+);
+----------------------------------------------------------------------------------------------
+--22
+CREATE OR REPLACE FUNCTION logger_conductor()
+RETURNS TRIGGER AS
+$$
+BEGIN
+
+
+
+IF TG_OP = 'INSERT' THEN
+INSERT INTO conductor_logs VALUES(DEFAULT, current_timestamp, NEW.ci_id, NEW.usuario, NEW.nombre, NEW.apellido);
+ELSIF TG_OP = 'UPDATE' THEN
+INSERT INTO conductor_logs VALUES(DEFAULT, current_timestamp, NEW.ci_id, NEW.usuario, NEW.nombre, NEW.apellido);
+END IF;
+RETURN OLD;
+END;
+$$
+LANGUAGE plpgsql;
+----------------------------------------------------------------------------------------------
+--23
+create extension pgcrypto
+
+select insert_cliente('12531399','testt',now()::date,'M',2684164,'ROJAS@GMAIL.COM','78130226','Cliente');
+select * from usuario
+ CREATE OR REPLACE FUNCTION insert_cliente(
+	p_idCi text,
+	p_nombre text,
+	p_nacimiento date,
+	p_sexo text,
+	p_telefono int,
+	p_correo text,
+	p_contra text,
+	p_tipoUsuario text 
+)returns void as
+$BODY$
+BEGIN
+	if exists(select * from usuario where id_ci = p_idCi) then
+		--actualizar
+		update usuario set contraseña = crypt(p_contra, gen_salt('bf')), nombre = p_nombre
+		where id_ci = p_idCi;
+	elsif not exists(select * from usuario where id_ci = p_idCi) then
+			insert into usuario values(Default,p_nombre,p_nacimiento,p_sexo,p_telefono,p_correo, crypt(p_contra, gen_salt('bf')),p_tipoUsuario);
+	end if;
+END;
+$BODY$
+LANGUAGE plpgsql;
+---------------------------------------------------------------------------------------
+--24
+CREATE OR REPLACE FUNCTION insert_conductor(
+	p_usuarioId text,
+	p_placa text,
+	p_brevete int,
+	p_categoria text
+)returns void as
+$BODY$
+BEGIN
+	if exists(select * from conductor where usuario_id = p_usuarioId ) then
+		--actualizar
+		update conductor set brevete = p_brevete, categoria = p_categoria
+		where usuario_id = p_usuarioId;
+	elsif not exists(select * from conductor where usuario_id = p_usuarioId) then
+			insert into conductor values(Default,p_usuarioId,p_placa,p_brevete,p_categoria);
+	end if;
+END;
+$BODY$
+LANGUAGE plpgsql;
+------------------------------------------------------------------------------------
+--25
+select verificarUsuario('huaytabailaba@gmail.com','78580652')
+CREATE OR REPLACE FUNCTION verificarUsuario(text,text)
+RETURNS TEXT AS
+$$
+BEGIN
+
+	IF EXISTS (SELECT *FROM usuario WHERE correo = $1 AND contraseña = crypt($2, contraseña)) THEN
+		RETURN 'Sesion iniciada correctamente';
+	ELSE
+		RAISE EXCEPTION 'Usuario y/o Contraseña incorrectos';
+	END IF;
+END
+$$
+LANGUAGE plpgsql;

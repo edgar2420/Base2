@@ -1,0 +1,4 @@
+1.-
+Insercion = "INSERT INTO tabla (campo1, campo2, campo3) VALUES (valor1, valor2, valor3) ON DUPLICATE KEY UPDATE campo1 = valor1, campo2 = valor2, campo3 = valor3";
+2.-
+Convierto = "SELECT GROUP_CONCAT(campo) FROM tabla";

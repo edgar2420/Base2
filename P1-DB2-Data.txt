@@ -1,0 +1,117 @@
+-- Datos SEGIP/ALCALDIA
+CREATE TABLE Personas(
+    codigo_id VARCHAR(12) NOT NULL PRIMARY KEY,
+    snombre VARCHAR(20) NOT NULL,
+    sapellido VARCHAR(20) NOT NULL,
+    stelefono VARCHAR(12),
+    sdireccion VARCHAR(80)
+    );
+	
+CREATE TABLE Clinicas(
+    codigo_id INT NOT NULL PRIMARY KEY,
+    snombre VARCHAR(30) NOT NULL,
+    inivel INT,
+    stelefono VARCHAR(12),
+    sdireccion VARCHAR(40)
+    );
+	
+INSERT INTO Personas VALUES('19905130-AF','Alejandro','Fernandez','72658162','Av. Banzer');
+INSERT INTO Personas VALUES('19861224-EG','Ernesto','Gonzales','775627162','Av. Beni');
+INSERT INTO Personas VALUES('19791001-JQ','Javier','Quino','79875211','Calle Tordo #3');
+INSERT INTO Personas VALUES('19870827-RS','Ramon','Solares','678963','Santos Dumont');
+INSERT INTO Personas VALUES('19821109-MC','Maria','Cardenas','65748291','Barrio Sirari');
+INSERT INTO Personas VALUES('20020202-MZ','Martin','Zabala','79654',NULL);
+INSERT INTO Personas VALUES('20060513-EP','Eugenia','Paniagua','3651544','4to Anillo');
+INSERT INTO Personas VALUES('19800405-IR','Isabel','Rosales','7234012',NULL);
+INSERT INTO Personas VALUES('19760402-VG','Victor','Gutierrez','72819462','Av. Las Americas #21');
+INSERT INTO Personas VALUES('19990619-CS','Camila','Suarez','68710541','Av. Beni 3er Anillo');
+INSERT INTO Personas VALUES('19920809-PP','Pedro','Perez','36571105','Entre 5to y 4to Anillo, Av. Banzer');
+INSERT INTO Personas VALUES('19960311-PG','Paco','Guerra','3471751',NULL);
+INSERT INTO Personas VALUES('19900415-LT','Luis','Trujillo','584781','Calle 1, #7');
+INSERT INTO Personas VALUES('19810721-AR','Antonio','Rendon','6518157','Calle 7');
+INSERT INTO Personas VALUES('19891231-JF','Juan','Fernandz','70000001',NULL);
+INSERT INTO Personas VALUES('19931001-AT','Andrea','Tejerina','33215',NULL);
+
+INSERT INTO Clinicas VALUES(1,'Clinica Sirari',3,'3384283','Barrio Sirari');
+INSERT INTO Clinicas VALUES(2,'Clinica Nuclear',5,'3647382','Calle Junin');
+INSERT INTO Clinicas VALUES(3,'Caja Petrolera',3,'3476352','Calle España');
+INSERT INTO Clinicas VALUES(4,'Caja Nacional',1,'3327183','Calle Irala');
+INSERT INTO Clinicas VALUES(5,'ProSalud',2,'3342718','Av. Alemana');
+
+-- DATOS CLINICA
+CREATE TABLE Pacientes(
+    codigo_id VARCHAR(11) NOT NULL PRIMARY KEY,
+    gsangre VARCHAR(3) NOT NULL    
+    );
+
+CREATE TABLE Doctores(
+    codigo_id VARCHAR(11) NOT NULL PRIMARY KEY,
+    sespecialidad VARCHAR(20) NOT NULL,
+    nsalario NUMERIC(15,2),
+    bactivo BOOLEAN NOT NULL    
+    );
+
+CREATE TABLE Clinicas(
+    codigo_id INT NOT NULL PRIMARY KEY,
+    snombre VARCHAR(30) NOT NULL,
+    inivel INT,
+    stelefono VARCHAR(12),
+    sdireccion VARCHAR(40)
+    );
+
+CREATE TABLE Consultas(
+    codigo_id SERIAL NOT NULL PRIMARY KEY,
+    doctor_id VARCHAR(11),
+    paciente_id VARCHAR(11),
+    dtfecha DATE NOT NULL,
+    UNIQUE (doctor_id,paciente_id,dtfecha),
+    FOREIGN KEY (doctor_id) REFERENCES Doctores(codigo_id),
+    FOREIGN KEY (paciente_id) REFERENCES Pacientes(codigo_id)
+);
+
+
+
+-- Clinica A
+INSERT INTO Pacientes VALUES('19821109-MC','A+');
+INSERT INTO Pacientes VALUES('19870827-RS','O+');
+INSERT INTO Pacientes VALUES('19800405-IR','B+');
+INSERT INTO Pacientes VALUES('19990619-CS','A-');
+INSERT INTO Pacientes VALUES('19861224-EG','AB-');
+INSERT INTO Pacientes VALUES('19905130-AF','AB+');
+INSERT INTO Doctores VALUES('19760402-VG','Oftalmologo',2300,true);
+INSERT INTO Doctores VALUES('20020202-MZ','Cardiologo',5600,true);
+INSERT INTO Doctores VALUES('19821109-MC','Cirujano',10350,false);
+
+INSERT INTO Consultas VALUES(1,'19760402-VG','19821109-MC','20150520');
+INSERT INTO Consultas VALUES(2,'20020202-MZ','19861224-EG','20150428');
+INSERT INTO Consultas VALUES(3,'19760402-VG','19870827-RS','20150426');
+INSERT INTO Consultas VALUES(4,'20020202-MZ','19905130-AF','20150520');
+INSERT INTO Consultas VALUES(5,'19821109-MC','19800405-IR','20150512');
+INSERT INTO Consultas VALUES(6,'19760402-VG','19990619-CS','20150519');
+
+
+
+-- Clinica B
+INSERT INTO Pacientes VALUES('19791001-JQ','O+');
+INSERT INTO Pacientes VALUES('19821109-MC','A+');
+INSERT INTO Pacientes VALUES('20060513-EP','A+');
+INSERT INTO Pacientes VALUES('19870827-RS','O+');
+INSERT INTO Pacientes VALUES('19810721-AR','O+');
+INSERT INTO Pacientes VALUES('19900415-LT','B+');
+INSERT INTO Pacientes VALUES('19800405-IR','B+');
+INSERT INTO Doctores VALUES('19821109-MC','Cirujano',10350,false);
+INSERT INTO Doctores VALUES('19791001-JQ','Pediatra',1850,true);
+INSERT INTO Doctores VALUES('19931001-AT','Pediatra',1999,true);
+INSERT INTO Doctores VALUES('19960311-PG','Cardiologo',2000,true);
+
+
+INSERT INTO Consultas VALUES(7,'19791001-JQ','20060513-EP','20150520');
+INSERT INTO Consultas VALUES(8,'19821109-MC','19810721-AR','20150514');
+INSERT INTO Consultas VALUES(9,'19821109-MC','19900415-LT','20150419');
+INSERT INTO Consultas VALUES(10,'19791001-JQ','19900415-LT','20150323');
+INSERT INTO Consultas VALUES(11,'19821109-MC','19810721-AR','20150623');
+INSERT INTO Consultas VALUES(12,'19821109-MC','19791001-JQ','20150502');
+INSERT INTO Consultas VALUES(13,'19960311-PG','19800405-IR','20150614');
+INSERT INTO Consultas VALUES(14,'19931001-AT','19870827-RS','20150410');
+INSERT INTO Consultas VALUES(15,'19931001-AT','19900415-LT','20150223');
+INSERT INTO Consultas VALUES(16,'19821109-MC','19900415-LT','20150723');

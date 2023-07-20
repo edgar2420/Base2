@@ -1,0 +1,20 @@
+CREATE OR REPLACE FUNCTION generar_consulta(clinica_id text, doctor_id text,
+paciente_id text) RETURNS void as
+$BODY$
+DECLARE
+codiguitoDoc text;
+codiguitoPac text;
+codiguitoClinica int;
+BEGIN
+select codigo_id into codiguitoDoc from personas where snombre = split_part(doctor_id, ' ', 1)
+and sapellido = split_part(doctor_id, ' ', 2);
+
+select codigo_id into codiguitoPac from personas where snombre = split_part(paciente_id, ' ', 1)
+and sapellido = split_part(paciente_id, ' ', 2);
+
+select codigo_id into codiguitoClinica from clinicas where snombre = clinica_id;
+
+insert into consultas values(51,codiguitoClinica,codiguitoDoc,codiguitoPac,now()::date);
+END
+$BODY$
+LANGUAGE plpgsql;

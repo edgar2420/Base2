@@ -1,0 +1,26 @@
+--1) Adicionar una restricción check en la tabla tasa_cambios para que no permita el registro
+--de valores negativos
+select * from tasa_cambios;
+alter table tasa_cambios add constraint check_tasacambios check (valor > 1); 
+
+--2) Crear un procedimiento almacenado para iniciar una nueva gestión(numero), al
+--momento de crear la nueva gestión, las otras gestiones deberán pasar a un estado inactivo,
+--siendo la nueva gestión la única activa
+select * from gestiones;
+CREATE OR REPLACE FUNCTION Nuevagestion (p_codigo integer, p_fecha date, p_moneda character,p_moneda numeric) Returns void AS
+$BODY$
+BEGIN
+INSERT INTO getiones values(numero, activo,) Values (2021,true);
+END;
+$BODY$
+LANGUAGE plpgsql;
+--3) Crear un procedimiento almacenado para ingresar una tasa de cambio (moneda, valor),
+--la fecha será asignada por el sistema
+Select ¨from tasa_cambios;
+CREATE OR REPLACE FUNCTION Cambio (p_codigo integer, p_fecha date, p_moneda character,p_valor numeric) Returns void AS
+$BODY$
+BEGIN
+INSERT INTO tasa_cambios values (p_codigo, p_fecha, p_moneda,p_valor);
+END;
+$BODY$
+LANGUAGE plpgsql;

@@ -1,0 +1,64 @@
+---Realizar un trigger que funcione en todas las tablas de la base de datos "Empresa" y que almacené la tabla de origen, 
+---el ID del registro, la operacion que fue realizada en ese registro y la fecha de dicha operación.
+
+
+CREATE TABLE loger_empresa (
+	tabla_info TEXT,
+	codigo_id SERIAL PRIMARY KEY,
+	op_info TEXT,
+	dtoperacion TIMESTAMP
+	);
+ 
+CREATE OR REPLACE FUNCTION logger_empresa()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		INSERT INTO loger_empresa VALUES(TG_TABLE_NAME,DEFAULT,'INSERT',current_timestamp);
+	ELSIF TG_OP = 'DELETE' THEN
+		INSERT INTO loger_empresa VALUES(TG_TABLE_NAME,DEFAULT,'DELETE',current_timestamp);
+	ELSIF TG_OP = 'UPDATE' THEN
+		INSERT INTO loger_empresa VALUES(TG_TABLE_NAME,DEFAULT,'UPDATE',current_timestamp);
+	END IF;
+  RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER loger_empresa
+ AFTER INSERT OR DELETE OR UPDATE ON departamentos
+ FOR EACH ROW
+ EXECUTE PROCEDURE logger_empresa();
+ 
+CREATE TRIGGER loger_empresa
+ AFTER INSERT OR DELETE OR UPDATE ON dpto_ubicaciones
+ FOR EACH ROW
+ EXECUTE PROCEDURE logger_empresa();
+
+CREATE TRIGGER loger_empresa
+ AFTER INSERT OR DELETE OR UPDATE ON empleados
+ FOR EACH ROW
+ EXECUTE PROCEDURE logger_empresa();
+ 
+ CREATE TRIGGER loger_empresa
+ AFTER INSERT OR DELETE OR UPDATE ON familiares
+ FOR EACH ROW
+ EXECUTE PROCEDURE logger_empresa();
+ 
+ CREATE TRIGGER loger_empresa
+ AFTER INSERT OR DELETE OR UPDATE ON proyectos
+ FOR EACH ROW
+ EXECUTE PROCEDURE logger_empresa();
+ 
+ CREATE TRIGGER loger_empresa
+ AFTER INSERT OR DELETE OR UPDATE ON trabajos
+ FOR EACH ROW
+ EXECUTE PROCEDURE logger_empresa();
+ 
+ select * from loger_empresa
+ 
+ 
+ insert into empleados values(1,'test','test','perez',now()::date,1200,'barrio')
+DELETE FROM empleados
+WHERE ci_id = 1;	
+ select * from empleados

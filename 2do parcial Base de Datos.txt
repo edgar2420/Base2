@@ -1,0 +1,127 @@
+select * from usuarios
+
+-- Crear una función que genere un código único para los usuarios basándose en la fecha
+-- y hora de creación del usuario según el siguiente formato:
+-- Últimos dos dígitos del año - tres primeras letras del nickname - dos dígitos de mes -
+-- inicial del nombre - dos dígitos de día - inicial de apellido
+--ejemplo, registro 1 ---> “19-ROO-05-R-26-R”
+
+create or replace function generar_codigo(
+	p_fecha date,
+	p_nickanme text,
+	p_nombre text,
+	p_dia date,
+	p_apellido text
+	) returns text as 
+$$
+declare 
+	v_resultado text;
+
+begin 	
+	select UPPER(concat( to_char(p_fecha,'YY'), '-', 
+	left(p_nickname,3),'-', to_char(p_fecha,'MM'),'-', 
+	left(p_nombre,1),'-', to_char(p_fecha,'DD'), left(p_apellido,1))) 
+	into v_resultado;
+	
+	return v_resultado;
+end;
+$$
+language plpgsql;
+
+-- Crear un procedimiento almacenado (SP) para registrar o actualizar un usuario bajo las
+-- siguientes condiciones:
+-- a. Si el código existe, actualizar los datos exceptuando el nickname y la fecha de
+-- creación.
+-- b. S el código no existe, registrar el usuario verificando que no exista ese nickname,
+-- en caso de existir, enviar una excepción indicando que el nombre de usuario ya
+-- se encuentra en uso.
+-- En ambos casos la contraseña se deberá encontrar encriptada.
+
+
+-- INSERT INTO Usuarios VALUES ('19-ROO-05-R-26-R','root','root','root','root','root@nur.edu','20190526',false),
+
+
+create or replace function update_user(
+	p_codigo_id text,    p_nickname text, p_password text,
+    p_nombre text,    p_email text, p_dtcreacion date, p_activo boolean) 
+	returns void as 
+$$
+begin 	
+	update usuarios
+	set codigo_id = p_codigo_id,
+		snickname = p_nickname,
+		spassword = p_password,
+		snombre = p_nombre,
+		sapellido = p_apellido,
+		email = p_email,
+		fecha_creacion = p_dtcreacion,
+		activo = p_activo
+	where p_codigo_id = codigo_id;
+end;
+$$
+language plpgsql;
+--------------------------------------------------------
+create extension pgcrypto;
+		
+CREATE OR REPLACE FUNCTION registrar_update(
+    p_codigo_id text,    p_nickname text, p_password text,
+    p_nombre text,    p_email text, p_dtcreacion date, p_activo boolean)
+  RETURNS void AS
+$BODY$
+BEGIN
+	IF NOT EXISTS(SELECT * FROM usuarios WHERE codigo_id = p_codigo_id) THEN
+		INSERT INTO usuario VALUES (p_codigo_id, p_nickname, p_password, p_snombre,p_apellido, p_email, p_dtcreacion, p_activo);
+		update usuarios set spassword = crypt(p_password, gen_salt('bf')) where codigo_id = p_codigo_id;
+		
+	ELSE
+		SELECT update_user(p_codigo_id,p_nickname, p_password, p_nombre ,p_email , p_dtcreacion, p_activo);
+		update usuarios set spassword = crypt(p_password, gen_salt('bf')) where codigo_id = p_codigo_id;
+	END IF;
+END;
+$BODY$
+  LANGUAGE plpgsql ;
+  
+-- Crear una función de autenticar usuarios ingresando el usuario y la contraseña, la
+-- función deberá verificar si el usuario existe y se encuentra activo
+
+-- a. Si los parámetros son correctos indicar que el inicio de sesión fue exitoso y
+-- registrar 'acceso' en la tabla “login_logs” junto a los campos requeridos.
+
+-- b. En caso que los datos sean correctos pero el usuario este inactivo se deberá
+--registrar en la tabla “login_logs” el valor 'disabled'.
+
+-- . Si los datos son incorrectos registrar 'error' .
+-- los últimos dos casos la función deberá enviar una excepción indicando que el usuario
+-- estaa inactivo o que los datos son erróneos
+select * from login_logs
+
+CREATE OR REPLACE FUNCTION login(
+     p_codigo_id text, p_nickname text, p_password text)
+  RETURNS void AS
+$BODY$
+BEGIN
+	-- Verificar si existe el registro
+	IF NOT EXISTS(SELECT * FROM usuarios WHERE p_nickname = snickname) THEN
+	RAISE EXCEPTION 'EL usuario no existe'
+		 USING HINT = 'Porfavor revisa los datos que ingresaste';
+	
+	ELSE
+		INSERT INTO login_logs VALUES (current_date,p_nickname,'Acceso');
+		RAISE NOTICE 'EL usuario Ingresó correctamente';
+	END IF;
+	
+	IF (SELECT * FROM usuarios WHERE p_nickname = snickname AND activo = false) THEN
+		INSERT INTO login_logs VALUES (current_date,p_nickname,'Disabled');
+		RAISE EXCEPTION 'Los datos son correctos pero el usuario está inactivo'
+		 USING HINT = 'Porfavor verifica el usuario que ingresaste';
+	END IF;
+	
+IF (SELECT * FROM usuarios WHERE p_nickname = snickname AND p_password <> spassowrd) THEN
+		INSERT INTO login_logs VALUES (current_date,p_nickname,'Error');
+		RAISE EXCEPTION 'el usuario y/o contraseña no coinciden'
+		 USING HINT = 'Porfavor revisa los datos que ingresaste';
+		
+	END IF;
+END;
+$BODY$
+  LANGUAGE plpgsql;

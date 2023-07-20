@@ -1,0 +1,11 @@
+--1
+SELECT E.snombre AS Nombre, COUNT(DISTINCT(P.numero_id)) AS totalProyectos, SUM(T.ihoras) as horasTrabajadas
+FROM empleados E
+LEFT JOIN trabajos T ON E.ci_id=T.empleado_id
+JOIN proyectos P ON T.proyecto_id=P.numero_id
+GROUP BY E.snombre;
+
+--2
+SELECT T.empleado_id,E.snombre,E.nsalario,SUM(T.ihoras)as horasTrabajadas ,SUM(T.ihoras * 57 )as Bono,(E.nsalario + SUM(T.ihoras * 57))as Total
+FROM empleados E JOIN trabajos T ON E.ci_id = T.empleado_id
+GROUP BY E.snombre,T.empleado_id,E.nsalario,T.ihoras;

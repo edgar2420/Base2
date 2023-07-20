@@ -1,0 +1,8 @@
+--MYSQL
+CREATE USER 'edgar'@'base2' IDENTIFIED BY 'base2';
+use empresa;
+
+--POSGREST
+CREATE USER edgar WITH PASSWORD 'base2';
+psql -U'edgar' -d'empresa';
+Password for user 'base2'

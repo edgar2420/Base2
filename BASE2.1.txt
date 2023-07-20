@@ -1,0 +1,103 @@
+CREATE USER remoto PASSWORD 'remoto';
+GRANT SELECT ON ALL TABLES IN SCHEMA public to remoto;
+
+CREATE USER base2 PASSWORD 'base2';
+GRANT INSERT,SELECT,UPDATE ON ALL TABLES IN SCHEMA public to base2;
+
+
+CREATE EXTENSION postgres_fdw
+
+CREATE SERVER svr_remoto
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS(host '127.0.0.1', port'5432', dbname'Clinica_A')
+
+CREATE USER MAPPING FOR postgres
+server svr_remoto OPTIONS(user'base2',password'base2')
+
+CREATE SCHEMA clinica_A;
+CREATE SCHEMA clinica_B;
+
+IMPORT FOREIGN SCHEMA public
+FROM SERVER svr_remoto INTO clinica_a;
+
+----------------------------------------------------
+
+CREATE SERVER svr_remoto2
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS(host '127.0.0.1', port'5432', dbname'Clinica_B')
+
+CREATE USER MAPPING FOR postgres
+server svr_remoto2 OPTIONS(user'base2',password'base2')
+
+IMPORT FOREIGN SCHEMA public
+FROM SERVER svr_remoto2 INTO clinica_b;
+
+------------------------------------------------------
+
+-- • Mostrar las personas que tienen consultas registradas en ambos servidores de
+-- clínicas
+
+select  paciente_id from clinica_a.consultas
+INTERSECT
+select paciente_id from clinica_b.consultas
+
+
+-- • Calcular el total de consultas realizadas por doctor, indiferente al servidor de clínica
+
+select COUNT(doctor_id) as nro_consultas, doctor_id from clinica_a.consultas
+group by doctor_id
+
+select COUNT(doctor_id) as nro_consultas, doctor_id from clinica_b.consultas
+group by doctor_id
+
+-- • Obtener los doctores que se encuentran registrados en ambos ervidores de clínicas.
+
+select codigo_id,sespecialidad from clinica_a.doctores
+INTERSECT
+select codigo_id,sespecialidad from clinica_b.doctores
+
+
+-- • Obtener los doctores que fueron atendidos como pacientes en el otro servidor
+-- clínica
+
+-- Doctores de Clinica B que fueron pacientes en Clinica A
+
+select * from clinica_a.pacientes
+join clinica_b.doctores on clinica_b.doctores.codigo_id = clinica_a.pacientes.codigo_id
+
+-- Doctores de Clinica A que fueron pacientes en Clinica B
+
+select * from clinica_b.pacientes
+join clinica_a.doctores on clinica_a.doctores.codigo_id = clinica_b.pacientes.codigo_id
+
+-- • Obtener los doctores que fueron atendidos como pacientes en el mismo servidor
+-- clínica
+
+--Para Clínica A
+select paciente_id from clinica_a.consultas
+join clinica_a.doctores on clinica_a.doctores.codigo_id = clinica_a.consultas.paciente_id
+
+--Para Clínica B
+select paciente_id from clinica_b.consultas
+join clinica_b.doctores on clinica_b.doctores.codigo_id = clinica_b.consultas.paciente_id
+
+
+-- • Obtener un reporte que indique el total de pacientes atendidos y registrados por
+-- servidor clínica, con el formato de ejemplo
+
+-- +----------+-----------------------+---------------------+
+-- | Clinica  |    Pac. Registrados   |    Pac. Atendidos   |
+-- +----------+-----------------------+---------------------+
+-- |    A     |          8            |          6          |
+-- +----------+-----------------------+---------------------+
+-- |    B     |          9            |          9          |
+-- +----------+-----------------------+---------------------+
+
+select 'A' as Clinica, COUNT(pacientes) as Pac_Registrados , COUNT(paciente_id) as Pac_atendidos from clinica_a.pacientes
+join clinica_a.consultas on clinica_a.consultas.paciente_id = clinica_a.pacientes.codigo_id
+UNION
+select 'B', COUNT(pacientes) as Pac_Registrados, COUNT(paciente_id) as Pac_atendidos from clinica_b.pacientes
+join clinica_b.consultas on clinica_b.consultas.paciente_id = clinica_b.pacientes.codigo_id
+
+select * from clinica_a.consultas
+select * from clinica_a.pacientes

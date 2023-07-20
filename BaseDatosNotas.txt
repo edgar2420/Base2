@@ -1,0 +1,259 @@
+-----------------------------CONSULTAS--------------------------------------------
+
+-- Obtener el total de proyectos y horas trabajadas en las que participa cada empleado.
+SELECT E.snombre AS Nombre, COUNT(DISTINCT(P.numero_id)) AS totalProyectos, SUM(T.ihoras) as horasTrabajadas
+FROM empleados E
+LEFT JOIN trabajos T ON E.ci_id=T.empleado_id
+JOIN proyectos P ON T.proyecto_id=P.numero_id
+GROUP BY E.snombre;
+
+
+--Obtener todos los proyectos controlados por departamentos que tienen mas de dos ubicaciones
+SELECT P.snombre AS Nombre, COUNT(DISTINCT(U.dpto_id)) AS t_ubicaciones
+FROM proyectos P
+JOIN departamentos D ON P.numero_id=D.numero_id
+JOIN dpto_ubicaciones U ON D.numero_id=U.dpto_id
+GROUP BY P.snombre
+HAVING COUNT(U.dpto_id) > 2;
+
+
+--Obtener la lista de empleados que nacieron en el mes de marzo
+SELECT * FROM empleados WHERE MONTH(dtnacimiento) = 3;
+
+
+--Obtener todos los departamentos que tienen un costo mayor al promedio de todos los departamentos
+SELECT D.snombre AS Departamento, AVG(E.nsalario) AS promedio, SUM(E.nsalario) AS total
+FROM empleados E
+RIGHT JOIN departamentos D ON E.dpto_id=D.numero_id
+LEFT JOIN trabajos T ON E.ci_id=T.empleado_id
+JOIN proyectos P ON T.proyecto_id=P.numero_id
+GROUP BY D.snombre
+HAVING AVG(E.nsalario) > SUM(E.nsalario);
+
+
+--Mostrar todos los administradores que no participan en un proyecto
+SELECT E.snombre AS Empleado,  COUNT(E.snombre) AS Participaciones
+FROM empleados E
+JOIN departamentos D ON E.ci_id=D.admin_id
+JOIN trabajos T ON E.ci_id=T.empleado_id
+JOIN proyectos P ON T.proyecto_id=P.numero_id
+GROUP BY E.snombre
+HAVING COUNT(E.snombre) > 0;
+
+
+---------
+
+--Obtener todos los empleados que tienen un sueldo mayor al promedio
+SELECT ci_id,snombre,nsalario FROM EMPLEADOS WHERE nsalario>(SELECT AVG(nsalario) FROM empleados) ;
+
+
+--Obtener los tres primeros departamentos con mayor costo en salarios
+SELECT DPTO_id,SUM(nsalario)as suma_Salario FROM EMPLEADOs GROUP BY DPTO_id order by suma_Salario desc;
+ 
+SELECT D.snombre AS Departamento, SUM(E.nsalario) AS total
+FROM empleados E
+RIGHT JOIN departamentos D ON E.dpto_id=D.numero_id GROUP BY D.snombre ORDER BY total DESC LIMIT 3;
+
+
+--Si la hora trabajada por proyecto es de 55 Bs., ¿cuál sería el ingreso total de cada empleado?
+SELECT T.empleado_id,E.snombre,E.nsalario,SUM(T.ihoras),SUM(T.ihoras * 55 )as LoQueSeLePaga,(E.nsalario + SUM(T.ihoras * 55))as Total
+FROM empleados E JOIN trabajos T ON E.ci_id = T.empleado_id
+GROUP BY E.snombre,T.empleado_id,E.nsalario,T.ihoras;
+
+
+----
+
+
+select ci_id,RPAD(snombre||' '||sappaterno,20,'') as
+nombre_completo,LPAD(nsalario::text,8,'0') from
+empleados;
+
+select substring (snombre,1,3)
+from departamentos;
+select substring (snombre,1,2)
+from empleados;
+
+select from empleados E JOIN departamentos ON E.dpto_id = D.numero_id;
+
+select upper(left(D.snombre,3))||'-'||left(E.snombre,1)||left(E.sappaterno,1)
+||'-'||substring(to_char(E.dtnacimiento, 'YYYY-MM-DD'),3,2)||
+substring(to_char(E.dtnacimiento, 'YYYY-MM-DD'),5,3)
+||substring(to_char(E.dtnacimiento, 'YYYY-MM-DD'),8,3)
+from empleados E join departamentos D on E.dpto_id = D.numero_id;
+
+
+--Obtener el total de horas trabajadas por empleado, indicando el nombre completo,
+  fecha de nacimiento y salario
+SELECT e.snombre, e.sappaterno, e.dtnacimiento, e.nsalario, SUM(ihoras)
+FROM trabajos t
+JOIN empleados e ON e.ci_id = t.empleado_id
+GROUP BY e.ci_id | ORDER BY 3 DESC
+
+
+------------------------RESTRICCIONES CHECK------------------------------
+
+Restricciónes en las columnas por medio del comando CHECK
+
+ALTER TABLE empleados
+ADD CONSTRAINT check_salario CHECK (nsalario > 1 AND nsalario < 100000);
+
+ALTER TABLE empleados
+ADD CONSTRAINT check_fecha CHECK (date_part('year',age(dtnacimiento))>=18);
+-- ADD CONSTRAINT check_fecha CHECK (dtnacimiento < now() - interval '18 year');
+
+ALTER TABLE pacientes
+ADD CONSTRAINT check_sangre CHECK(UPPER(gsangre) IN ('O-','O+','A-','A+','B-','B+','AB-','AB+'));
+
+
+----
+
+alter table empleados
+drop constraint empleados_supervisor_id_fkey;
+
+alter table empleados
+alter column supervisor_id type text;
+
+alter table familiares
+drop constraint familiares_empleado_id_fkey;
+
+alter table familiares
+alter column empleado_id type text;
+
+alter table trabajos
+drop constraint trabajos_empleado_id_fkey;
+
+alter table trabajos
+alter column empleado_id type text;
+
+alter table departamentos
+drop constraint departamentos_admin_id_fkey;
+
+alter table departamentos
+alter column admin_id type text;
+
+alter table empleados
+alter column ci_id type text;
+
+alter table empleados
+add foreign key (supervisor_id) references empleados(ci_id) on update cascade;
+
+alter table familiares
+add foreign key (empleado_id) references empleados(ci_id) on update cascade on delete cascade;
+
+alter table trabajos
+add foreign key (empleado_id) references empleados(ci_id) on update cascade on delete cascade;
+
+alter table departamentos
+add foreign key (admin_id) references empleados(ci_id) on update cascade on delete set null;
+
+
+-------------------------CONSULTA ANIDADA------------------------------------
+
+SELECT D.numero_id, D.snombre, SUM(E.nsalario) as total
+    FROM empleados E JOIN departamentos D ON E.dpto_id=D.numero_id
+    GROUP BY D.numero_id
+    HAVING SUM(E.nsalario) > (SELECT AVG(A.total) FROM (
+    SELECT D.numero_id, D.snombre, SUM(E.nsalario) as total
+    FROM empleados E JOIN departamentos D ON E.dpto_id=D.numero_id
+    GROUP BY D.numero_id ) A)
+
+CTE -- Common Table Expressions
+
+WITH promedio AS (SELECT AVG(A.total) FROM (
+        SELECT D.numero_id, D.snombre, SUM(E.nsalario) as total
+        FROM empleados E JOIN departamentos D ON E.dpto_id=D.numero_id
+        GROUP BY D.numero_id ) A)
+
+    SELECT D.numero_id, D.snombre, SUM(E.nsalario) as total
+    FROM empleados E JOIN departamentos D ON E.dpto_id=D.numero_id
+    GROUP BY D.numero_id
+    HAVING SUM(E.nsalario) > (SELECT * FROM promedio)
+
+
+
+------------------------CONSULTAS INTERBASE------------------------------------------
+
+1. REALIZAR UNA CONSULTA QUE OBTENGA EL TOTAL DE EMPLEADOS POR BASE DE DATOS CON EL SIGUIENTE FORMATO
+
+    +------------+----------------------------+
+    |    DBMS    |       TOTAL EMPLEADOS      |
+    +------------+----------------------------+
+    | SERVER A(1)|              13            |
+    +------------+----------------------------+
+    | SERVER B(2)|              22            |
+    +------------+----------------------------+
+    | SERVER C(3)|              16            |
+    +------------+----------------------------+
+
+select 'Server A(1)' as DBMS, count(ci_id) from empleados
+Union
+select 'Server B(2)', count (ci_id) from remotoa.empleados
+Union
+select 'Server C(3)', count (ci_id) from remotob.empleados order by DBMS asc
+
+
+2. OBTENER LA LISTA DE TODOS LOS EMPLEADOS DE TODAS LAS BASES DE DATOS, SIN REPETIR EL REGISTRO DE EMPLEADOS
+SELECT COUNT(*) FROM (
+SELECT ci_id, snombre FROM empleados e
+UNION
+SELECT ci_id, snombre FROM server_b.empleados
+UNION
+SELECT ci_id, snombre FROM server_c.empleadps );
+
+
+---OBTENER LA LISTA DE EMPLEADOS QUE SOLO EXISTEN EN LA BASE DE DATOS "A"(1) Y NO EN LA "B"(2)
+select * 
+from empleados
+where not exists (select * from empresab.empleados
+			 where empleados.ci_id = public.empleados.ci_id)
+			 order by ci_id asc;
+
+---OBTENER LA LISTA DE EMPLEADOS QUE SOLO EXISTEN EN LA DB "C"(3) Y NO EN "B"(2) Y "A"(1)
+select * from empresac.empleados
+except 
+select * from empresab.empleados
+except
+select * from empleados
+order by ci_id asc;
+
+
+---DISEÑAR UNA CONSULTA QUE ME INDIQUE LA INFORMACIÓN DEL EMPLEADO Y ADICIONAR UNA NUEVA COLUMNA AL COMIENZO INDICANDO EN QUE BASES DE DATOS EXISTE EL REGISTRO
+select 'Empresa A' as DB, * from empleados
+union
+select 'Empresa B', * from empresab.empleados
+union
+select 'Empresa C', * from empresac.empleados
+order by ci_id asc;
+
+
+
+-------------------CREACION DE SERVER Y SCHEMA---------------------------------------
+
+CREATE EXTENSION postgres_fdw;
+
+CREATE SERVER server_a
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS (dbname 'empresa', host '127.0.0.1');
+
+CREATE USER MAPPING FOR current_user
+SERVER server_a
+OPTIONS(user 'postgres', password 'dimiz');
+
+CREATE SCHEMA remoto;
+
+IMPORT FOREIGN SCHEMA public
+FROM SERVER server_a
+INTO remoto;
+
+
+--------------------------CREACION DE USUARIO-------------------------------------
+
+--Con todos los permisos
+CREATE USER usuario PASSWORD 'remoto'
+GRANT ALL PRIVILEGES ON DATABASE principal TO usuario;
+
+--Con solo uno especifico
+CREATE USER invitado PASSWORD 'base'
+SELECT ON DATABASE principal to invitado;
+
+

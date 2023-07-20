@@ -1,0 +1,17 @@
+--Obtener todos los empleados que tienen un sueldo mayor al promedio
+
+SELECT ci_id,snombre,nsalario FROM EMPLEADOS WHERE nsalario>(SELECT AVG(nsalario) FROM empleados) ;
+--Obtener los tres primeros departamentos con mayor costo en salarios
+ --SELECT DPTO_id,SUM(nsalario)as suma_Salario FROM EMPLEADOs GROUP BY DPTO_id order by suma_Salario desc;
+ 
+ SELECT D.snombre AS Departamento, SUM(E.nsalario) AS total
+FROM empleados E
+RIGHT JOIN departamentos D ON E.dpto_id=D.numero_id GROUP BY D.snombre ORDER BY total DESC LIMIT 3;
+--Obtener el total de ingresos de empleados con familiares y empleados sin familiares, mostrando la diferencia de montos entre ambos 
+
+
+--Si la hora trabajada por proyecto es de 55 Bs., ¿cuál sería el ingreso total de cada empleado?
+
+SELECT T.empleado_id,E.snombre,E.nsalario,SUM(T.ihoras),SUM(T.ihoras * 55 )as LoQueSeLePaga,(E.nsalario + SUM(T.ihoras * 55))as Total
+FROM empleados E JOIN trabajos T ON E.ci_id = T.empleado_id
+GROUP BY E.snombre,T.empleado_id,E.nsalario,T.ihoras;

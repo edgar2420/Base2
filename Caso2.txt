@@ -1,0 +1,3173 @@
+-- Started on 2017-03-29 20:06:24
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 187 (class 1259 OID 330558)
+-- Name: prmacteconomicas; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE prmacteconomicas (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmacteconomicas OWNER TO sdaguirre;
+
+--
+-- TOC entry 188 (class 1259 OID 330566)
+-- Name: prmcargos; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE prmcargos (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmcargos OWNER TO sdaguirre;
+
+--
+-- TOC entry 189 (class 1259 OID 330574)
+-- Name: prmcategorias; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE prmcategorias (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    sdescripcion text,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmcategorias OWNER TO sdaguirre;
+
+--
+-- TOC entry 190 (class 1259 OID 330582)
+-- Name: prmestadocivil; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE prmestadocivil (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmestadocivil OWNER TO sdaguirre;
+
+--
+-- TOC entry 191 (class 1259 OID 330590)
+-- Name: prmniveleducacion; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE prmniveleducacion (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    sdescripcion text,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmniveleducacion OWNER TO sdaguirre;
+
+--
+-- TOC entry 192 (class 1259 OID 330598)
+-- Name: prmpaises; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE prmpaises (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmpaises OWNER TO sdaguirre;
+
+--
+-- TOC entry 193 (class 1259 OID 330606)
+-- Name: prmprofesiones; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE prmprofesiones (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmprofesiones OWNER TO sdaguirre;
+
+--
+-- TOC entry 194 (class 1259 OID 330614)
+-- Name: prmrangoservicios; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE prmrangoservicios (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    sdescripcion text,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmrangoservicios OWNER TO sdaguirre;
+
+--
+-- TOC entry 195 (class 1259 OID 330622)
+-- Name: prmsistema; Type: TABLE; Schema: public; Owner: soldig
+--
+
+CREATE TABLE prmsistema (
+    codigo_id integer NOT NULL,
+    idlabel text NOT NULL,
+    svalue text NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmsistema OWNER TO soldig;
+
+--
+-- TOC entry 196 (class 1259 OID 330630)
+-- Name: prmtipodocumentos; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE prmtipodocumentos (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    sdescripcion text,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmtipodocumentos OWNER TO sdaguirre;
+
+--
+-- TOC entry 197 (class 1259 OID 330638)
+-- Name: prmtipopersonas; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE prmtipopersonas (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    bnatural boolean NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmtipopersonas OWNER TO sdaguirre;
+
+--
+-- TOC entry 198 (class 1259 OID 330646)
+-- Name: prmtiporeferencias; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE prmtiporeferencias (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmtiporeferencias OWNER TO sdaguirre;
+
+--
+-- TOC entry 199 (class 1259 OID 330654)
+-- Name: prmviviendas; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE prmviviendas (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE prmviviendas OWNER TO sdaguirre;
+
+--
+-- TOC entry 200 (class 1259 OID 330665)
+-- Name: tblaccidentes; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblaccidentes (
+    codigo_id integer NOT NULL,
+    dtfecha timestamp without time zone,
+    subicacion text,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblaccidentes OWNER TO sdaguirre;
+
+--
+-- TOC entry 201 (class 1259 OID 330673)
+-- Name: tblaccidenteshistorial; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblaccidenteshistorial (
+    codigo_id bigint NOT NULL,
+    poliza_id integer NOT NULL,
+    accidente_id integer NOT NULL,
+    dtfecha timestamp without time zone,
+    subicacion text,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblaccidenteshistorial OWNER TO sdaguirre;
+
+--
+-- TOC entry 202 (class 1259 OID 330681)
+-- Name: tblanexos; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblanexos (
+    codigo_id bigint NOT NULL,
+    poliza_id integer,
+    sdescripcion text,
+    dtanexo date,
+    dvalortotal numeric(15,5) NOT NULL,
+    dprimatotal numeric(15,5) NOT NULL,
+    dcomision numeric(15,5) NOT NULL,
+    iestado_fl integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblanexos OWNER TO sdaguirre;
+
+--
+-- TOC entry 203 (class 1259 OID 330688)
+-- Name: tblasistencias; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblasistencias (
+    codigo_id bigint NOT NULL,
+    poliza_id integer NOT NULL,
+    smotivo text NOT NULL,
+    dtfecha timestamp without time zone NOT NULL,
+    subicacion text NOT NULL,
+    gpsx double precision,
+    gpsy double precision,
+    sdetalle text,
+    iestado_fl integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL,
+    dtreclamo date,
+    dtconclusion date,
+    scobertura_fl text,
+    nmonto_conclusion numeric(18,5),
+    sreferencia text
+);
+
+
+ALTER TABLE tblasistencias OWNER TO sdaguirre;
+
+--
+-- TOC entry 204 (class 1259 OID 330696)
+-- Name: tblbeneficiarios; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblbeneficiarios (
+    codigo_id bigint NOT NULL,
+    cliente_id integer,
+    snombre text NOT NULL,
+    sappaterno text,
+    sapmaterno text,
+    nacionalidad_id integer NOT NULL,
+    snit text NOT NULL,
+    sdireccion text,
+    stelefonofijo text NOT NULL,
+    stelefonomovil text NOT NULL,
+    actividad_id integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    usuario_id integer,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblbeneficiarios OWNER TO sdaguirre;
+
+--
+-- TOC entry 205 (class 1259 OID 330704)
+-- Name: tblclientes; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblclientes (
+    codigo_id bigint NOT NULL,
+    snit text NOT NULL,
+    snombre text NOT NULL,
+    sappaterno text NOT NULL,
+    sapmaterno text NOT NULL,
+    szona text NOT NULL,
+    sdireccion text NOT NULL,
+    stelefonofijo text NOT NULL,
+    stelefonomovil text NOT NULL,
+    sfax text NOT NULL,
+    semail text NOT NULL,
+    nacionalidad_id integer NOT NULL,
+    sociedad_id integer NOT NULL,
+    actividad_id integer NOT NULL,
+    tipovivienda_id integer NOT NULL,
+    tiemposerv_id integer NOT NULL,
+    igenero_fl integer NOT NULL,
+    iestadocivil_fl integer NOT NULL,
+    slugarnac text NOT NULL,
+    sfechanac date,
+    tipodocumento_id integer NOT NULL,
+    snrodocumento text NOT NULL,
+    extensiondi text,
+    residencia_id integer NOT NULL,
+    profesion_id integer NOT NULL,
+    niveleducacion_id integer NOT NULL,
+    ejecutivo_id integer,
+    usuario_id integer,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblclientes OWNER TO sdaguirre;
+
+--
+-- TOC entry 206 (class 1259 OID 330712)
+-- Name: tblcomprobantes; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblcomprobantes (
+    codigo_id bigint NOT NULL,
+    gestion_id integer NOT NULL,
+    itipo_fl integer NOT NULL,
+    snombre text NOT NULL,
+    sdetalle text NOT NULL,
+    dtfecha date NOT NULL,
+    flagestado boolean,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL,
+    sreferencia text
+);
+
+
+ALTER TABLE tblcomprobantes OWNER TO sdaguirre;
+
+--
+-- TOC entry 207 (class 1259 OID 330719)
+-- Name: tblcuentas; Type: TABLE; Schema: public; Owner: soldig
+--
+
+CREATE TABLE tblcuentas (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    sdescripcion text NOT NULL,
+    snrocuenta text NOT NULL,
+    itipo integer NOT NULL,
+    padre_id integer,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL,
+    inivel_fl integer,
+    smoneda_fl text
+);
+
+
+ALTER TABLE tblcuentas OWNER TO soldig;
+
+--
+-- TOC entry 208 (class 1259 OID 330729)
+-- Name: tbldependientes; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tbldependientes (
+    codigo_id bigint NOT NULL,
+    cliente_id integer,
+    snombre text NOT NULL,
+    sdescripcion text NOT NULL,
+    itelefono integer,
+    sdireccion text,
+    iconcurrencia_id integer NOT NULL,
+    usuario_id integer,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tbldependientes OWNER TO sdaguirre;
+
+--
+-- TOC entry 209 (class 1259 OID 330737)
+-- Name: tbldetalleasegurados; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tbldetalleasegurados (
+    codigo_id bigint NOT NULL,
+    poliza_id integer NOT NULL,
+    dtfecha date NOT NULL,
+    sobservacion text,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tbldetalleasegurados OWNER TO sdaguirre;
+
+--
+-- TOC entry 210 (class 1259 OID 330745)
+-- Name: tblempleados; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblempleados (
+    codigo_id integer NOT NULL,
+    cargo_id integer,
+    snombre text NOT NULL,
+    sappaterno text,
+    sapmaterno text,
+    sci text,
+    scorreo text NOT NULL,
+    itelefono text,
+    usuario_id integer,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblempleados OWNER TO sdaguirre;
+
+--
+-- TOC entry 211 (class 1259 OID 330753)
+-- Name: tblgestiones; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblgestiones (
+    gestion_id integer NOT NULL,
+    activo_id boolean NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblgestiones OWNER TO sdaguirre;
+
+--
+-- TOC entry 212 (class 1259 OID 330757)
+-- Name: tblpermisos; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblpermisos (
+    codigo_id bigint NOT NULL,
+    rol_id integer,
+    sitio_id integer,
+    bselect boolean,
+    binsert boolean,
+    bupdate boolean,
+    bdelete boolean,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblpermisos OWNER TO sdaguirre;
+
+--
+-- TOC entry 213 (class 1259 OID 330762)
+-- Name: tblplanespagos; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblplanespagos (
+    codigo_id bigint NOT NULL,
+    poliza_id integer NOT NULL,
+    dcuota numeric(15,5) NOT NULL,
+    dcomision numeric(15,5) NOT NULL,
+    dtvencimiento date NOT NULL,
+    dtpago date,
+    iestado_fl integer NOT NULL,
+    sdetalle text,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL,
+    bnotify boolean
+);
+
+
+ALTER TABLE tblplanespagos OWNER TO sdaguirre;
+
+--
+-- TOC entry 214 (class 1259 OID 330770)
+-- Name: tblpolizas; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblpolizas (
+    codigo_id bigint NOT NULL,
+    cliente_id integer,
+    servicio_id integer NOT NULL,
+    inumeropoliza text NOT NULL,
+    sdescripcion text,
+    dtvigencia_ini date,
+    dtvigencia_fin date,
+    dmontoasegurado numeric(15,5) NOT NULL,
+    dvalortotal numeric(15,5) NOT NULL,
+    dvalorneto numeric(15,5) NOT NULL,
+    dcomision numeric(15,5) NOT NULL,
+    ipago_fl integer NOT NULL,
+    iestado_fl integer NOT NULL,
+    polizapadre_id integer,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL,
+    sdetalle text,
+    subrogado text,
+    sbcontacto text,
+    dcredito numeric(15,5)
+);
+
+
+ALTER TABLE tblpolizas OWNER TO sdaguirre;
+
+--
+-- TOC entry 215 (class 1259 OID 330778)
+-- Name: tblproveedores; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblproveedores (
+    codigo_id integer NOT NULL,
+    snit text NOT NULL,
+    snombre text NOT NULL,
+    stelefono text,
+    sdireccion text,
+    sdescripcion text,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblproveedores OWNER TO sdaguirre;
+
+--
+-- TOC entry 216 (class 1259 OID 330786)
+-- Name: tblreclamos; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblreclamos (
+    codigo_id bigint NOT NULL,
+    cliente_id integer,
+    sobservacion_reclamos text,
+    dtfecha_reclamo timestamp without time zone,
+    sdescripcion_reclamo text,
+    iestado_id integer,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblreclamos OWNER TO sdaguirre;
+
+--
+-- TOC entry 217 (class 1259 OID 330794)
+-- Name: tblreferencias; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblreferencias (
+    codigo_id bigint NOT NULL,
+    cliente_id integer,
+    referencias_id integer,
+    snombre text NOT NULL,
+    sappaterno text,
+    sapmaterno text,
+    sci text NOT NULL,
+    scorreo text,
+    sdireccion text,
+    itelefono text,
+    usuario_id integer,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblreferencias OWNER TO sdaguirre;
+
+--
+-- TOC entry 218 (class 1259 OID 330802)
+-- Name: tblroles; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblroles (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    iestado_fl integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblroles OWNER TO sdaguirre;
+
+--
+-- TOC entry 219 (class 1259 OID 330810)
+-- Name: tblseguimientos; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblseguimientos (
+    codigo_id bigint NOT NULL,
+    asistencia_id integer NOT NULL,
+    stipo_operacion text NOT NULL,
+    sobservacion text NOT NULL,
+    dtfecha timestamp without time zone,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblseguimientos OWNER TO sdaguirre;
+
+--
+-- TOC entry 220 (class 1259 OID 330818)
+-- Name: tblservicios; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblservicios (
+    codigo_id integer NOT NULL,
+    proveedor_id integer NOT NULL,
+    categoria_id integer NOT NULL,
+    snombre text NOT NULL,
+    sformula text NOT NULL,
+    icomision numeric(10,5) NOT NULL,
+    icredito numeric(10,5) NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL,
+    ctacontado_id integer,
+    ctacredito_id integer
+);
+
+
+ALTER TABLE tblservicios OWNER TO sdaguirre;
+
+--
+-- TOC entry 221 (class 1259 OID 330826)
+-- Name: tblsitios; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblsitios (
+    codigo_id integer NOT NULL,
+    ssitio_nm text NOT NULL
+);
+
+
+ALTER TABLE tblsitios OWNER TO sdaguirre;
+
+--
+-- TOC entry 222 (class 1259 OID 330834)
+-- Name: tbltasacambios; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tbltasacambios (
+    tasa_id integer NOT NULL,
+    dtvalor date NOT NULL,
+    smoneda_id text NOT NULL,
+    nvalor_id numeric(10,5),
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tbltasacambios OWNER TO sdaguirre;
+
+--
+-- TOC entry 223 (class 1259 OID 330841)
+-- Name: tbltomador; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tbltomador (
+    codigo_id integer NOT NULL,
+    snombre text NOT NULL,
+    sappaterno text,
+    sapmaterno text,
+    nacionalidad_id integer NOT NULL,
+    sdireccion text NOT NULL,
+    stelefonofijo text NOT NULL,
+    stelefonomovil text NOT NULL,
+    actividad_id integer NOT NULL,
+    snit text NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tbltomador OWNER TO sdaguirre;
+
+--
+-- TOC entry 224 (class 1259 OID 330849)
+-- Name: tbltransacciones; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tbltransacciones (
+    codigo_id bigint NOT NULL,
+    ndebe numeric(18,5) NOT NULL,
+    nhaber numeric(18,5) NOT NULL,
+    sglosa text NOT NULL,
+    scheque text,
+    stasa text,
+    cuenta_id integer,
+    comprobante_id bigint,
+    flagestado boolean,
+    anexo_fl text,
+    anexo_title text,
+    anexo_detalle text,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tbltransacciones OWNER TO sdaguirre;
+
+--
+-- TOC entry 225 (class 1259 OID 330857)
+-- Name: tblusuarios; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblusuarios (
+    codigo_id integer NOT NULL,
+    rol_id integer NOT NULL,
+    scuenta text NOT NULL,
+    spassword text NOT NULL,
+    scorreo text,
+    iestado_fl integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblusuarios OWNER TO sdaguirre;
+
+--
+-- TOC entry 229 (class 1259 OID 330966)
+-- Name: prmacteconomicas_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE prmacteconomicas_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmacteconomicas_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2852 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: prmacteconomicas_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE prmacteconomicas_codigo_id_seq OWNED BY prmacteconomicas.codigo_id;
+
+
+--
+-- TOC entry 230 (class 1259 OID 330968)
+-- Name: prmcargos_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE prmcargos_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmcargos_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2853 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: prmcargos_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE prmcargos_codigo_id_seq OWNED BY prmcargos.codigo_id;
+
+
+--
+-- TOC entry 231 (class 1259 OID 330970)
+-- Name: prmcategorias_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE prmcategorias_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmcategorias_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2854 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: prmcategorias_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE prmcategorias_codigo_id_seq OWNED BY prmcategorias.codigo_id;
+
+
+--
+-- TOC entry 232 (class 1259 OID 330972)
+-- Name: prmestadocivil_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE prmestadocivil_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmestadocivil_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2855 (class 0 OID 0)
+-- Dependencies: 232
+-- Name: prmestadocivil_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE prmestadocivil_codigo_id_seq OWNED BY prmestadocivil.codigo_id;
+
+
+--
+-- TOC entry 233 (class 1259 OID 330974)
+-- Name: prmniveleducacion_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE prmniveleducacion_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmniveleducacion_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2856 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: prmniveleducacion_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE prmniveleducacion_codigo_id_seq OWNED BY prmniveleducacion.codigo_id;
+
+
+--
+-- TOC entry 234 (class 1259 OID 330976)
+-- Name: prmpaises_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE prmpaises_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmpaises_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2857 (class 0 OID 0)
+-- Dependencies: 234
+-- Name: prmpaises_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE prmpaises_codigo_id_seq OWNED BY prmpaises.codigo_id;
+
+
+--
+-- TOC entry 235 (class 1259 OID 330978)
+-- Name: prmprofesiones_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE prmprofesiones_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmprofesiones_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2858 (class 0 OID 0)
+-- Dependencies: 235
+-- Name: prmprofesiones_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE prmprofesiones_codigo_id_seq OWNED BY prmprofesiones.codigo_id;
+
+
+--
+-- TOC entry 236 (class 1259 OID 330980)
+-- Name: prmrangoservicios_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE prmrangoservicios_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmrangoservicios_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2859 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: prmrangoservicios_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE prmrangoservicios_codigo_id_seq OWNED BY prmrangoservicios.codigo_id;
+
+
+--
+-- TOC entry 237 (class 1259 OID 330982)
+-- Name: prmsistema_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: soldig
+--
+
+CREATE SEQUENCE prmsistema_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmsistema_codigo_id_seq OWNER TO soldig;
+
+--
+-- TOC entry 2860 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: prmsistema_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: soldig
+--
+
+ALTER SEQUENCE prmsistema_codigo_id_seq OWNED BY prmsistema.codigo_id;
+
+
+--
+-- TOC entry 238 (class 1259 OID 330984)
+-- Name: prmtipodocumentos_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE prmtipodocumentos_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmtipodocumentos_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2861 (class 0 OID 0)
+-- Dependencies: 238
+-- Name: prmtipodocumentos_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE prmtipodocumentos_codigo_id_seq OWNED BY prmtipodocumentos.codigo_id;
+
+
+--
+-- TOC entry 239 (class 1259 OID 330986)
+-- Name: prmtipopersonas_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE prmtipopersonas_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmtipopersonas_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2862 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: prmtipopersonas_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE prmtipopersonas_codigo_id_seq OWNED BY prmtipopersonas.codigo_id;
+
+
+--
+-- TOC entry 240 (class 1259 OID 330988)
+-- Name: prmtiporeferencias_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE prmtiporeferencias_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmtiporeferencias_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2863 (class 0 OID 0)
+-- Dependencies: 240
+-- Name: prmtiporeferencias_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE prmtiporeferencias_codigo_id_seq OWNED BY prmtiporeferencias.codigo_id;
+
+
+--
+-- TOC entry 241 (class 1259 OID 330990)
+-- Name: prmviviendas_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE prmviviendas_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE prmviviendas_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2864 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: prmviviendas_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE prmviviendas_codigo_id_seq OWNED BY prmviviendas.codigo_id;
+
+
+--
+-- TOC entry 242 (class 1259 OID 330992)
+-- Name: tblaccidentes_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblaccidentes_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblaccidentes_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2865 (class 0 OID 0)
+-- Dependencies: 242
+-- Name: tblaccidentes_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblaccidentes_codigo_id_seq OWNED BY tblaccidentes.codigo_id;
+
+
+--
+-- TOC entry 243 (class 1259 OID 330994)
+-- Name: tblaccidenteshistorial_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblaccidenteshistorial_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblaccidenteshistorial_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2866 (class 0 OID 0)
+-- Dependencies: 243
+-- Name: tblaccidenteshistorial_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblaccidenteshistorial_codigo_id_seq OWNED BY tblaccidenteshistorial.codigo_id;
+
+
+--
+-- TOC entry 244 (class 1259 OID 330996)
+-- Name: tblanexos_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblanexos_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblanexos_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2867 (class 0 OID 0)
+-- Dependencies: 244
+-- Name: tblanexos_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblanexos_codigo_id_seq OWNED BY tblanexos.codigo_id;
+
+
+--
+-- TOC entry 245 (class 1259 OID 330998)
+-- Name: tblasistencias_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblasistencias_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblasistencias_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2868 (class 0 OID 0)
+-- Dependencies: 245
+-- Name: tblasistencias_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblasistencias_codigo_id_seq OWNED BY tblasistencias.codigo_id;
+
+
+--
+-- TOC entry 246 (class 1259 OID 331000)
+-- Name: tblbeneficiarios_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblbeneficiarios_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblbeneficiarios_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2869 (class 0 OID 0)
+-- Dependencies: 246
+-- Name: tblbeneficiarios_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblbeneficiarios_codigo_id_seq OWNED BY tblbeneficiarios.codigo_id;
+
+
+--
+-- TOC entry 247 (class 1259 OID 331002)
+-- Name: tblclientes_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblclientes_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblclientes_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2870 (class 0 OID 0)
+-- Dependencies: 247
+-- Name: tblclientes_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblclientes_codigo_id_seq OWNED BY tblclientes.codigo_id;
+
+
+--
+-- TOC entry 248 (class 1259 OID 331004)
+-- Name: tblcomprobantes_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblcomprobantes_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblcomprobantes_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2871 (class 0 OID 0)
+-- Dependencies: 248
+-- Name: tblcomprobantes_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblcomprobantes_codigo_id_seq OWNED BY tblcomprobantes.codigo_id;
+
+
+--
+-- TOC entry 249 (class 1259 OID 331006)
+-- Name: tblcuentas_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: soldig
+--
+
+CREATE SEQUENCE tblcuentas_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblcuentas_codigo_id_seq OWNER TO soldig;
+
+--
+-- TOC entry 2872 (class 0 OID 0)
+-- Dependencies: 249
+-- Name: tblcuentas_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: soldig
+--
+
+ALTER SEQUENCE tblcuentas_codigo_id_seq OWNED BY tblcuentas.codigo_id;
+
+
+--
+-- TOC entry 250 (class 1259 OID 331008)
+-- Name: tbldependientes_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tbldependientes_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tbldependientes_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2873 (class 0 OID 0)
+-- Dependencies: 250
+-- Name: tbldependientes_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tbldependientes_codigo_id_seq OWNED BY tbldependientes.codigo_id;
+
+
+--
+-- TOC entry 251 (class 1259 OID 331010)
+-- Name: tbldetalleasegurados_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tbldetalleasegurados_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tbldetalleasegurados_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2874 (class 0 OID 0)
+-- Dependencies: 251
+-- Name: tbldetalleasegurados_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tbldetalleasegurados_codigo_id_seq OWNED BY tbldetalleasegurados.codigo_id;
+
+
+--
+-- TOC entry 252 (class 1259 OID 331012)
+-- Name: tblempleados_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblempleados_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblempleados_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2875 (class 0 OID 0)
+-- Dependencies: 252
+-- Name: tblempleados_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblempleados_codigo_id_seq OWNED BY tblempleados.codigo_id;
+
+
+--
+-- TOC entry 269 (class 1259 OID 331525)
+-- Name: tblperiodos; Type: TABLE; Schema: public; Owner: soldig
+--
+
+CREATE TABLE tblperiodos (
+    gestion_id integer NOT NULL,
+    periodo_id integer NOT NULL,
+    activo_fl boolean NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblperiodos OWNER TO soldig;
+
+--
+-- TOC entry 254 (class 1259 OID 331020)
+-- Name: tblpermisos_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblpermisos_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblpermisos_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2876 (class 0 OID 0)
+-- Dependencies: 254
+-- Name: tblpermisos_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblpermisos_codigo_id_seq OWNED BY tblpermisos.codigo_id;
+
+
+--
+-- TOC entry 255 (class 1259 OID 331022)
+-- Name: tblplanespagos_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblplanespagos_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblplanespagos_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2877 (class 0 OID 0)
+-- Dependencies: 255
+-- Name: tblplanespagos_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblplanespagos_codigo_id_seq OWNED BY tblplanespagos.codigo_id;
+
+
+--
+-- TOC entry 256 (class 1259 OID 331024)
+-- Name: tblpolizas_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblpolizas_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblpolizas_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2878 (class 0 OID 0)
+-- Dependencies: 256
+-- Name: tblpolizas_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblpolizas_codigo_id_seq OWNED BY tblpolizas.codigo_id;
+
+
+--
+-- TOC entry 257 (class 1259 OID 331026)
+-- Name: tblproveedores_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblproveedores_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblproveedores_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2879 (class 0 OID 0)
+-- Dependencies: 257
+-- Name: tblproveedores_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblproveedores_codigo_id_seq OWNED BY tblproveedores.codigo_id;
+
+
+--
+-- TOC entry 258 (class 1259 OID 331028)
+-- Name: tblreclamos_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblreclamos_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblreclamos_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2880 (class 0 OID 0)
+-- Dependencies: 258
+-- Name: tblreclamos_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblreclamos_codigo_id_seq OWNED BY tblreclamos.codigo_id;
+
+
+--
+-- TOC entry 259 (class 1259 OID 331030)
+-- Name: tblreferencias_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblreferencias_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblreferencias_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2881 (class 0 OID 0)
+-- Dependencies: 259
+-- Name: tblreferencias_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblreferencias_codigo_id_seq OWNED BY tblreferencias.codigo_id;
+
+
+--
+-- TOC entry 260 (class 1259 OID 331032)
+-- Name: tblrenovaciones; Type: TABLE; Schema: public; Owner: sdaguirre
+--
+
+CREATE TABLE tblrenovaciones (
+    codigo_id bigint NOT NULL,
+    poliza_id bigint NOT NULL,
+    smateria text,
+    sdetalle text,
+    dtvigencia_ini date NOT NULL,
+    dtvigencia_fin date NOT NULL,
+    dmontoasegurado numeric(15,5) NOT NULL,
+    dvalortotal numeric(15,5) NOT NULL,
+    dvalorneto numeric(15,5) NOT NULL,
+    dcomision numeric(15,5) NOT NULL,
+    ipago_fl integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp without time zone,
+    dcmodified timestamp without time zone,
+    access_id integer NOT NULL
+);
+
+
+ALTER TABLE tblrenovaciones OWNER TO sdaguirre;
+
+--
+-- TOC entry 261 (class 1259 OID 331038)
+-- Name: tblrenovaciones_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblrenovaciones_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblrenovaciones_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2882 (class 0 OID 0)
+-- Dependencies: 261
+-- Name: tblrenovaciones_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblrenovaciones_codigo_id_seq OWNED BY tblrenovaciones.codigo_id;
+
+
+--
+-- TOC entry 262 (class 1259 OID 331040)
+-- Name: tblroles_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblroles_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblroles_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2883 (class 0 OID 0)
+-- Dependencies: 262
+-- Name: tblroles_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblroles_codigo_id_seq OWNED BY tblroles.codigo_id;
+
+
+--
+-- TOC entry 263 (class 1259 OID 331042)
+-- Name: tblseguimientos_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblseguimientos_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblseguimientos_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2884 (class 0 OID 0)
+-- Dependencies: 263
+-- Name: tblseguimientos_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblseguimientos_codigo_id_seq OWNED BY tblseguimientos.codigo_id;
+
+
+--
+-- TOC entry 264 (class 1259 OID 331044)
+-- Name: tblservicios_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblservicios_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblservicios_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2885 (class 0 OID 0)
+-- Dependencies: 264
+-- Name: tblservicios_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblservicios_codigo_id_seq OWNED BY tblservicios.codigo_id;
+
+
+--
+-- TOC entry 265 (class 1259 OID 331046)
+-- Name: tbltasacambios_tasa_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tbltasacambios_tasa_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tbltasacambios_tasa_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2886 (class 0 OID 0)
+-- Dependencies: 265
+-- Name: tbltasacambios_tasa_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tbltasacambios_tasa_id_seq OWNED BY tbltasacambios.tasa_id;
+
+
+--
+-- TOC entry 266 (class 1259 OID 331048)
+-- Name: tbltomador_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tbltomador_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tbltomador_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2887 (class 0 OID 0)
+-- Dependencies: 266
+-- Name: tbltomador_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tbltomador_codigo_id_seq OWNED BY tbltomador.codigo_id;
+
+
+--
+-- TOC entry 267 (class 1259 OID 331050)
+-- Name: tbltransacciones_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tbltransacciones_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tbltransacciones_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2888 (class 0 OID 0)
+-- Dependencies: 267
+-- Name: tbltransacciones_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tbltransacciones_codigo_id_seq OWNED BY tbltransacciones.codigo_id;
+
+
+--
+-- TOC entry 268 (class 1259 OID 331052)
+-- Name: tblusuarios_codigo_id_seq; Type: SEQUENCE; Schema: public; Owner: sdaguirre
+--
+
+CREATE SEQUENCE tblusuarios_codigo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tblusuarios_codigo_id_seq OWNER TO sdaguirre;
+
+--
+-- TOC entry 2889 (class 0 OID 0)
+-- Dependencies: 268
+-- Name: tblusuarios_codigo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sdaguirre
+--
+
+ALTER SEQUENCE tblusuarios_codigo_id_seq OWNED BY tblusuarios.codigo_id;
+
+
+--
+-- TOC entry 2523 (class 2604 OID 331056)
+-- Name: prmacteconomicas codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmacteconomicas ALTER COLUMN codigo_id SET DEFAULT nextval('prmacteconomicas_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2524 (class 2604 OID 331057)
+-- Name: prmcargos codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmcargos ALTER COLUMN codigo_id SET DEFAULT nextval('prmcargos_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2525 (class 2604 OID 331058)
+-- Name: prmcategorias codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmcategorias ALTER COLUMN codigo_id SET DEFAULT nextval('prmcategorias_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2526 (class 2604 OID 331059)
+-- Name: prmestadocivil codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmestadocivil ALTER COLUMN codigo_id SET DEFAULT nextval('prmestadocivil_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2527 (class 2604 OID 331060)
+-- Name: prmniveleducacion codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmniveleducacion ALTER COLUMN codigo_id SET DEFAULT nextval('prmniveleducacion_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2528 (class 2604 OID 331061)
+-- Name: prmpaises codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmpaises ALTER COLUMN codigo_id SET DEFAULT nextval('prmpaises_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2529 (class 2604 OID 331062)
+-- Name: prmprofesiones codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmprofesiones ALTER COLUMN codigo_id SET DEFAULT nextval('prmprofesiones_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2530 (class 2604 OID 331063)
+-- Name: prmrangoservicios codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmrangoservicios ALTER COLUMN codigo_id SET DEFAULT nextval('prmrangoservicios_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2531 (class 2604 OID 331064)
+-- Name: prmsistema codigo_id; Type: DEFAULT; Schema: public; Owner: soldig
+--
+
+ALTER TABLE ONLY prmsistema ALTER COLUMN codigo_id SET DEFAULT nextval('prmsistema_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2532 (class 2604 OID 331065)
+-- Name: prmtipodocumentos codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmtipodocumentos ALTER COLUMN codigo_id SET DEFAULT nextval('prmtipodocumentos_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2533 (class 2604 OID 331066)
+-- Name: prmtipopersonas codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmtipopersonas ALTER COLUMN codigo_id SET DEFAULT nextval('prmtipopersonas_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2534 (class 2604 OID 331067)
+-- Name: prmtiporeferencias codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmtiporeferencias ALTER COLUMN codigo_id SET DEFAULT nextval('prmtiporeferencias_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2535 (class 2604 OID 331068)
+-- Name: prmviviendas codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmviviendas ALTER COLUMN codigo_id SET DEFAULT nextval('prmviviendas_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2536 (class 2604 OID 331069)
+-- Name: tblaccidentes codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblaccidentes ALTER COLUMN codigo_id SET DEFAULT nextval('tblaccidentes_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2537 (class 2604 OID 331070)
+-- Name: tblaccidenteshistorial codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblaccidenteshistorial ALTER COLUMN codigo_id SET DEFAULT nextval('tblaccidenteshistorial_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2538 (class 2604 OID 331071)
+-- Name: tblanexos codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblanexos ALTER COLUMN codigo_id SET DEFAULT nextval('tblanexos_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2539 (class 2604 OID 331072)
+-- Name: tblasistencias codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblasistencias ALTER COLUMN codigo_id SET DEFAULT nextval('tblasistencias_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2540 (class 2604 OID 331073)
+-- Name: tblbeneficiarios codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblbeneficiarios ALTER COLUMN codigo_id SET DEFAULT nextval('tblbeneficiarios_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2541 (class 2604 OID 331074)
+-- Name: tblclientes codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes ALTER COLUMN codigo_id SET DEFAULT nextval('tblclientes_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2542 (class 2604 OID 331075)
+-- Name: tblcomprobantes codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblcomprobantes ALTER COLUMN codigo_id SET DEFAULT nextval('tblcomprobantes_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2543 (class 2604 OID 331076)
+-- Name: tblcuentas codigo_id; Type: DEFAULT; Schema: public; Owner: soldig
+--
+
+ALTER TABLE ONLY tblcuentas ALTER COLUMN codigo_id SET DEFAULT nextval('tblcuentas_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2544 (class 2604 OID 331077)
+-- Name: tbldependientes codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbldependientes ALTER COLUMN codigo_id SET DEFAULT nextval('tbldependientes_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2545 (class 2604 OID 331078)
+-- Name: tbldetalleasegurados codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbldetalleasegurados ALTER COLUMN codigo_id SET DEFAULT nextval('tbldetalleasegurados_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2546 (class 2604 OID 331079)
+-- Name: tblempleados codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblempleados ALTER COLUMN codigo_id SET DEFAULT nextval('tblempleados_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2547 (class 2604 OID 331080)
+-- Name: tblpermisos codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblpermisos ALTER COLUMN codigo_id SET DEFAULT nextval('tblpermisos_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2548 (class 2604 OID 331081)
+-- Name: tblplanespagos codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblplanespagos ALTER COLUMN codigo_id SET DEFAULT nextval('tblplanespagos_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2549 (class 2604 OID 331082)
+-- Name: tblpolizas codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblpolizas ALTER COLUMN codigo_id SET DEFAULT nextval('tblpolizas_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2550 (class 2604 OID 331083)
+-- Name: tblproveedores codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblproveedores ALTER COLUMN codigo_id SET DEFAULT nextval('tblproveedores_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2551 (class 2604 OID 331084)
+-- Name: tblreclamos codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblreclamos ALTER COLUMN codigo_id SET DEFAULT nextval('tblreclamos_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2552 (class 2604 OID 331085)
+-- Name: tblreferencias codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblreferencias ALTER COLUMN codigo_id SET DEFAULT nextval('tblreferencias_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2560 (class 2604 OID 331086)
+-- Name: tblrenovaciones codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblrenovaciones ALTER COLUMN codigo_id SET DEFAULT nextval('tblrenovaciones_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2553 (class 2604 OID 331087)
+-- Name: tblroles codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblroles ALTER COLUMN codigo_id SET DEFAULT nextval('tblroles_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2554 (class 2604 OID 331088)
+-- Name: tblseguimientos codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblseguimientos ALTER COLUMN codigo_id SET DEFAULT nextval('tblseguimientos_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2555 (class 2604 OID 331089)
+-- Name: tblservicios codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblservicios ALTER COLUMN codigo_id SET DEFAULT nextval('tblservicios_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2556 (class 2604 OID 331090)
+-- Name: tbltasacambios tasa_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbltasacambios ALTER COLUMN tasa_id SET DEFAULT nextval('tbltasacambios_tasa_id_seq'::regclass);
+
+
+--
+-- TOC entry 2557 (class 2604 OID 331091)
+-- Name: tbltomador codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbltomador ALTER COLUMN codigo_id SET DEFAULT nextval('tbltomador_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2558 (class 2604 OID 331092)
+-- Name: tbltransacciones codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbltransacciones ALTER COLUMN codigo_id SET DEFAULT nextval('tbltransacciones_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2559 (class 2604 OID 331093)
+-- Name: tblusuarios codigo_id; Type: DEFAULT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblusuarios ALTER COLUMN codigo_id SET DEFAULT nextval('tblusuarios_codigo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2628 (class 2606 OID 331109)
+-- Name: tblcuentas UK_nrocuenta; Type: CONSTRAINT; Schema: public; Owner: soldig
+--
+
+ALTER TABLE ONLY tblcuentas
+    ADD CONSTRAINT "UK_nrocuenta" UNIQUE (snrocuenta);
+
+
+--
+-- TOC entry 2562 (class 2606 OID 331111)
+-- Name: prmacteconomicas prmacteconomicas_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmacteconomicas
+    ADD CONSTRAINT prmacteconomicas_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2564 (class 2606 OID 331113)
+-- Name: prmacteconomicas prmacteconomicas_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmacteconomicas
+    ADD CONSTRAINT prmacteconomicas_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2566 (class 2606 OID 331115)
+-- Name: prmcargos prmcargos_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmcargos
+    ADD CONSTRAINT prmcargos_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2568 (class 2606 OID 331117)
+-- Name: prmcargos prmcargos_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmcargos
+    ADD CONSTRAINT prmcargos_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2570 (class 2606 OID 331119)
+-- Name: prmcategorias prmcategorias_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmcategorias
+    ADD CONSTRAINT prmcategorias_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2572 (class 2606 OID 331121)
+-- Name: prmcategorias prmcategorias_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmcategorias
+    ADD CONSTRAINT prmcategorias_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2574 (class 2606 OID 331123)
+-- Name: prmestadocivil prmestadocivil_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmestadocivil
+    ADD CONSTRAINT prmestadocivil_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2576 (class 2606 OID 331125)
+-- Name: prmestadocivil prmestadocivil_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmestadocivil
+    ADD CONSTRAINT prmestadocivil_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2578 (class 2606 OID 331127)
+-- Name: prmniveleducacion prmniveleducacion_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmniveleducacion
+    ADD CONSTRAINT prmniveleducacion_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2580 (class 2606 OID 331129)
+-- Name: prmniveleducacion prmniveleducacion_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmniveleducacion
+    ADD CONSTRAINT prmniveleducacion_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2582 (class 2606 OID 331131)
+-- Name: prmpaises prmpaises_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmpaises
+    ADD CONSTRAINT prmpaises_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2584 (class 2606 OID 331133)
+-- Name: prmpaises prmpaises_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmpaises
+    ADD CONSTRAINT prmpaises_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2586 (class 2606 OID 331135)
+-- Name: prmprofesiones prmprofesiones_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmprofesiones
+    ADD CONSTRAINT prmprofesiones_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2588 (class 2606 OID 331137)
+-- Name: prmprofesiones prmprofesiones_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmprofesiones
+    ADD CONSTRAINT prmprofesiones_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2590 (class 2606 OID 331139)
+-- Name: prmrangoservicios prmrangoservicios_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmrangoservicios
+    ADD CONSTRAINT prmrangoservicios_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2592 (class 2606 OID 331141)
+-- Name: prmrangoservicios prmrangoservicios_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmrangoservicios
+    ADD CONSTRAINT prmrangoservicios_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2594 (class 2606 OID 331143)
+-- Name: prmsistema prmsistema_pkey; Type: CONSTRAINT; Schema: public; Owner: soldig
+--
+
+ALTER TABLE ONLY prmsistema
+    ADD CONSTRAINT prmsistema_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2596 (class 2606 OID 331145)
+-- Name: prmtipodocumentos prmtipodocumentos_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmtipodocumentos
+    ADD CONSTRAINT prmtipodocumentos_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2598 (class 2606 OID 331147)
+-- Name: prmtipodocumentos prmtipodocumentos_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmtipodocumentos
+    ADD CONSTRAINT prmtipodocumentos_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2600 (class 2606 OID 331149)
+-- Name: prmtipopersonas prmtipopersonas_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmtipopersonas
+    ADD CONSTRAINT prmtipopersonas_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2602 (class 2606 OID 331151)
+-- Name: prmtipopersonas prmtipopersonas_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmtipopersonas
+    ADD CONSTRAINT prmtipopersonas_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2604 (class 2606 OID 331153)
+-- Name: prmtiporeferencias prmtiporeferencias_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmtiporeferencias
+    ADD CONSTRAINT prmtiporeferencias_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2606 (class 2606 OID 331155)
+-- Name: prmtiporeferencias prmtiporeferencias_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmtiporeferencias
+    ADD CONSTRAINT prmtiporeferencias_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2608 (class 2606 OID 331157)
+-- Name: prmviviendas prmviviendas_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmviviendas
+    ADD CONSTRAINT prmviviendas_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2610 (class 2606 OID 331159)
+-- Name: prmviviendas prmviviendas_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY prmviviendas
+    ADD CONSTRAINT prmviviendas_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2612 (class 2606 OID 331161)
+-- Name: tblaccidentes tblaccidentes_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblaccidentes
+    ADD CONSTRAINT tblaccidentes_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2614 (class 2606 OID 331163)
+-- Name: tblaccidenteshistorial tblaccidenteshistorial_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblaccidenteshistorial
+    ADD CONSTRAINT tblaccidenteshistorial_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2616 (class 2606 OID 331165)
+-- Name: tblanexos tblanexos_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblanexos
+    ADD CONSTRAINT tblanexos_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2618 (class 2606 OID 331167)
+-- Name: tblasistencias tblasistencias_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblasistencias
+    ADD CONSTRAINT tblasistencias_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2620 (class 2606 OID 331169)
+-- Name: tblbeneficiarios tblbeneficiarios_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblbeneficiarios
+    ADD CONSTRAINT tblbeneficiarios_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2622 (class 2606 OID 331171)
+-- Name: tblclientes tblclientes_UK_nombre_apellidos_nit_deleted; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT "tblclientes_UK_nombre_apellidos_nit_deleted" UNIQUE (snit, snombre, sappaterno, sapmaterno, bdeleted);
+
+
+--
+-- TOC entry 2624 (class 2606 OID 331173)
+-- Name: tblclientes tblclientes_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT tblclientes_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2626 (class 2606 OID 331175)
+-- Name: tblcomprobantes tblcomprobantes_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblcomprobantes
+    ADD CONSTRAINT tblcomprobantes_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2630 (class 2606 OID 331177)
+-- Name: tblcuentas tblcuentas_pkey; Type: CONSTRAINT; Schema: public; Owner: soldig
+--
+
+ALTER TABLE ONLY tblcuentas
+    ADD CONSTRAINT tblcuentas_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2632 (class 2606 OID 331179)
+-- Name: tbldependientes tbldependientes_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbldependientes
+    ADD CONSTRAINT tbldependientes_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2634 (class 2606 OID 331181)
+-- Name: tbldetalleasegurados tbldetalleasegurados_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbldetalleasegurados
+    ADD CONSTRAINT tbldetalleasegurados_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2636 (class 2606 OID 331183)
+-- Name: tblempleados tblempleados_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblempleados
+    ADD CONSTRAINT tblempleados_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2638 (class 2606 OID 331185)
+-- Name: tblempleados tblempleados_sci_snombre_sappaterno_sapmaterno_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblempleados
+    ADD CONSTRAINT tblempleados_sci_snombre_sappaterno_sapmaterno_key UNIQUE (sci, snombre, sappaterno, sapmaterno);
+
+
+--
+-- TOC entry 2640 (class 2606 OID 331187)
+-- Name: tblgestiones tblgestiones_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblgestiones
+    ADD CONSTRAINT tblgestiones_pkey PRIMARY KEY (gestion_id);
+
+
+--
+-- TOC entry 2688 (class 2606 OID 331529)
+-- Name: tblperiodos tblperiodos_pkey; Type: CONSTRAINT; Schema: public; Owner: soldig
+--
+
+ALTER TABLE ONLY tblperiodos
+    ADD CONSTRAINT tblperiodos_pkey PRIMARY KEY (gestion_id, periodo_id);
+
+
+--
+-- TOC entry 2642 (class 2606 OID 331191)
+-- Name: tblpermisos tblpermisos_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblpermisos
+    ADD CONSTRAINT tblpermisos_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2644 (class 2606 OID 331193)
+-- Name: tblplanespagos tblplanespagos_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblplanespagos
+    ADD CONSTRAINT tblplanespagos_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2646 (class 2606 OID 331195)
+-- Name: tblpolizas tblpolizas_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblpolizas
+    ADD CONSTRAINT tblpolizas_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2648 (class 2606 OID 331197)
+-- Name: tblpolizas tblpolizas_servicio_inumpoliza_deleted_UK; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblpolizas
+    ADD CONSTRAINT "tblpolizas_servicio_inumpoliza_deleted_UK" UNIQUE (servicio_id, inumeropoliza, bdeleted);
+
+
+--
+-- TOC entry 2650 (class 2606 OID 331199)
+-- Name: tblproveedores tblproveedores_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblproveedores
+    ADD CONSTRAINT tblproveedores_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2652 (class 2606 OID 331201)
+-- Name: tblproveedores tblproveedores_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblproveedores
+    ADD CONSTRAINT tblproveedores_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2654 (class 2606 OID 331203)
+-- Name: tblreclamos tblreclamos_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblreclamos
+    ADD CONSTRAINT tblreclamos_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2656 (class 2606 OID 331205)
+-- Name: tblreferencias tblreferencias_cliente_id_snombre_sappaterno_sapmaterno_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblreferencias
+    ADD CONSTRAINT tblreferencias_cliente_id_snombre_sappaterno_sapmaterno_key UNIQUE (cliente_id, snombre, sappaterno, sapmaterno);
+
+
+--
+-- TOC entry 2658 (class 2606 OID 331207)
+-- Name: tblreferencias tblreferencias_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblreferencias
+    ADD CONSTRAINT tblreferencias_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2684 (class 2606 OID 331209)
+-- Name: tblrenovaciones tblrenovaciones_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblrenovaciones
+    ADD CONSTRAINT tblrenovaciones_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2686 (class 2606 OID 331211)
+-- Name: tblrenovaciones tblrenovaciones_poliza_id_dtvigencia_ini_dtvigencia_fin_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblrenovaciones
+    ADD CONSTRAINT tblrenovaciones_poliza_id_dtvigencia_ini_dtvigencia_fin_key UNIQUE (poliza_id, dtvigencia_ini, dtvigencia_fin);
+
+
+--
+-- TOC entry 2660 (class 2606 OID 331213)
+-- Name: tblroles tblroles_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblroles
+    ADD CONSTRAINT tblroles_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2662 (class 2606 OID 331215)
+-- Name: tblroles tblroles_snombre_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblroles
+    ADD CONSTRAINT tblroles_snombre_key UNIQUE (snombre);
+
+
+--
+-- TOC entry 2664 (class 2606 OID 331217)
+-- Name: tblseguimientos tblseguimientos_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblseguimientos
+    ADD CONSTRAINT tblseguimientos_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2666 (class 2606 OID 331219)
+-- Name: tblservicios tblservicios_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblservicios
+    ADD CONSTRAINT tblservicios_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2670 (class 2606 OID 331221)
+-- Name: tblsitios tblsitios_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblsitios
+    ADD CONSTRAINT tblsitios_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2672 (class 2606 OID 331223)
+-- Name: tblsitios tblsitios_ssitio_nm_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblsitios
+    ADD CONSTRAINT tblsitios_ssitio_nm_key UNIQUE (ssitio_nm);
+
+
+--
+-- TOC entry 2674 (class 2606 OID 331225)
+-- Name: tbltasacambios tbltasacambios_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbltasacambios
+    ADD CONSTRAINT tbltasacambios_pkey PRIMARY KEY (tasa_id);
+
+
+--
+-- TOC entry 2676 (class 2606 OID 331227)
+-- Name: tbltomador tbltomador_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbltomador
+    ADD CONSTRAINT tbltomador_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2678 (class 2606 OID 331229)
+-- Name: tbltransacciones tbltransacciones_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbltransacciones
+    ADD CONSTRAINT tbltransacciones_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2680 (class 2606 OID 331231)
+-- Name: tblusuarios tblusuarios_pkey; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblusuarios
+    ADD CONSTRAINT tblusuarios_pkey PRIMARY KEY (codigo_id);
+
+
+--
+-- TOC entry 2682 (class 2606 OID 331233)
+-- Name: tblusuarios tblusuarios_scuenta_key; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblusuarios
+    ADD CONSTRAINT tblusuarios_scuenta_key UNIQUE (scuenta);
+
+
+--
+-- TOC entry 2668 (class 2606 OID 331235)
+-- Name: tblservicios uk_servicios; Type: CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblservicios
+    ADD CONSTRAINT uk_servicios UNIQUE (proveedor_id, categoria_id, snombre);
+
+
+--
+-- TOC entry 2727 (class 2606 OID 331256)
+-- Name: tblservicios fk_cuenta_contado; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblservicios
+    ADD CONSTRAINT fk_cuenta_contado FOREIGN KEY (ctacontado_id) REFERENCES tblcuentas(codigo_id);
+
+
+--
+-- TOC entry 2728 (class 2606 OID 331261)
+-- Name: tblservicios fk_cuenta_credito; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblservicios
+    ADD CONSTRAINT fk_cuenta_credito FOREIGN KEY (ctacredito_id) REFERENCES tblcuentas(codigo_id);
+
+
+--
+-- TOC entry 2689 (class 2606 OID 331266)
+-- Name: tblaccidenteshistorial tblaccidenteshistorial_accidente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblaccidenteshistorial
+    ADD CONSTRAINT tblaccidenteshistorial_accidente_id_fkey FOREIGN KEY (accidente_id) REFERENCES tblaccidentes(codigo_id);
+
+
+--
+-- TOC entry 2690 (class 2606 OID 331271)
+-- Name: tblaccidenteshistorial tblaccidenteshistorial_poliza_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblaccidenteshistorial
+    ADD CONSTRAINT tblaccidenteshistorial_poliza_id_fkey FOREIGN KEY (poliza_id) REFERENCES tblpolizas(codigo_id);
+
+
+--
+-- TOC entry 2691 (class 2606 OID 331276)
+-- Name: tblanexos tblanexos_poliza_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblanexos
+    ADD CONSTRAINT tblanexos_poliza_id_fkey FOREIGN KEY (poliza_id) REFERENCES tblpolizas(codigo_id);
+
+
+--
+-- TOC entry 2692 (class 2606 OID 331281)
+-- Name: tblasistencias tblasistencias_poliza_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblasistencias
+    ADD CONSTRAINT tblasistencias_poliza_id_fkey FOREIGN KEY (poliza_id) REFERENCES tblpolizas(codigo_id);
+
+
+--
+-- TOC entry 2693 (class 2606 OID 331286)
+-- Name: tblbeneficiarios tblbeneficiarios_actividad_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblbeneficiarios
+    ADD CONSTRAINT tblbeneficiarios_actividad_id_fkey FOREIGN KEY (actividad_id) REFERENCES prmacteconomicas(codigo_id);
+
+
+--
+-- TOC entry 2694 (class 2606 OID 331291)
+-- Name: tblbeneficiarios tblbeneficiarios_cliente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblbeneficiarios
+    ADD CONSTRAINT tblbeneficiarios_cliente_id_fkey FOREIGN KEY (cliente_id) REFERENCES tblclientes(codigo_id);
+
+
+--
+-- TOC entry 2695 (class 2606 OID 331296)
+-- Name: tblbeneficiarios tblbeneficiarios_nacionalidad_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblbeneficiarios
+    ADD CONSTRAINT tblbeneficiarios_nacionalidad_id_fkey FOREIGN KEY (nacionalidad_id) REFERENCES prmpaises(codigo_id);
+
+
+--
+-- TOC entry 2696 (class 2606 OID 331301)
+-- Name: tblbeneficiarios tblbeneficiarios_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblbeneficiarios
+    ADD CONSTRAINT tblbeneficiarios_usuario_id_fkey FOREIGN KEY (usuario_id) REFERENCES tblusuarios(codigo_id);
+
+
+--
+-- TOC entry 2697 (class 2606 OID 331306)
+-- Name: tblclientes tblclientes_actividad_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT tblclientes_actividad_id_fkey FOREIGN KEY (actividad_id) REFERENCES prmacteconomicas(codigo_id);
+
+
+--
+-- TOC entry 2698 (class 2606 OID 331311)
+-- Name: tblclientes tblclientes_ejecutivo_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT tblclientes_ejecutivo_id_fkey FOREIGN KEY (ejecutivo_id) REFERENCES tblempleados(codigo_id);
+
+
+--
+-- TOC entry 2699 (class 2606 OID 331316)
+-- Name: tblclientes tblclientes_nacionalidad_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT tblclientes_nacionalidad_id_fkey FOREIGN KEY (nacionalidad_id) REFERENCES prmpaises(codigo_id);
+
+
+--
+-- TOC entry 2700 (class 2606 OID 331321)
+-- Name: tblclientes tblclientes_niveleducacion_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT tblclientes_niveleducacion_id_fkey FOREIGN KEY (niveleducacion_id) REFERENCES prmniveleducacion(codigo_id);
+
+
+--
+-- TOC entry 2701 (class 2606 OID 331326)
+-- Name: tblclientes tblclientes_profesion_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT tblclientes_profesion_id_fkey FOREIGN KEY (profesion_id) REFERENCES prmprofesiones(codigo_id);
+
+
+--
+-- TOC entry 2702 (class 2606 OID 331331)
+-- Name: tblclientes tblclientes_residencia_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT tblclientes_residencia_id_fkey FOREIGN KEY (residencia_id) REFERENCES prmpaises(codigo_id);
+
+
+--
+-- TOC entry 2703 (class 2606 OID 331336)
+-- Name: tblclientes tblclientes_sociedad_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT tblclientes_sociedad_id_fkey FOREIGN KEY (sociedad_id) REFERENCES prmtipopersonas(codigo_id);
+
+
+--
+-- TOC entry 2704 (class 2606 OID 331341)
+-- Name: tblclientes tblclientes_tiemposerv_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT tblclientes_tiemposerv_id_fkey FOREIGN KEY (tiemposerv_id) REFERENCES prmrangoservicios(codigo_id);
+
+
+--
+-- TOC entry 2705 (class 2606 OID 331346)
+-- Name: tblclientes tblclientes_tipodocumento_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT tblclientes_tipodocumento_id_fkey FOREIGN KEY (tipodocumento_id) REFERENCES prmtipodocumentos(codigo_id);
+
+
+--
+-- TOC entry 2706 (class 2606 OID 331351)
+-- Name: tblclientes tblclientes_tipovivienda_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT tblclientes_tipovivienda_id_fkey FOREIGN KEY (tipovivienda_id) REFERENCES prmviviendas(codigo_id);
+
+
+--
+-- TOC entry 2707 (class 2606 OID 331356)
+-- Name: tblclientes tblclientes_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblclientes
+    ADD CONSTRAINT tblclientes_usuario_id_fkey FOREIGN KEY (usuario_id) REFERENCES tblusuarios(codigo_id);
+
+
+--
+-- TOC entry 2708 (class 2606 OID 331361)
+-- Name: tblcomprobantes tblcomprobantes_gestion_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblcomprobantes
+    ADD CONSTRAINT tblcomprobantes_gestion_id_fkey FOREIGN KEY (gestion_id) REFERENCES tblgestiones(gestion_id);
+
+
+--
+-- TOC entry 2709 (class 2606 OID 331366)
+-- Name: tblcuentas tblcuentas_padre_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: soldig
+--
+
+ALTER TABLE ONLY tblcuentas
+    ADD CONSTRAINT tblcuentas_padre_id_fkey FOREIGN KEY (padre_id) REFERENCES tblcuentas(codigo_id);
+
+
+--
+-- TOC entry 2710 (class 2606 OID 331371)
+-- Name: tblcuentas tblcuentas_smoneda_fl_fkey; Type: FK CONSTRAINT; Schema: public; Owner: soldig
+--
+
+ALTER TABLE ONLY tblcuentas
+    ADD CONSTRAINT tblcuentas_smoneda_fl_fkey FOREIGN KEY (smoneda_fl) REFERENCES tblmonedas(smoneda_id);
+
+
+--
+-- TOC entry 2711 (class 2606 OID 331376)
+-- Name: tbldependientes tbldependientes_cliente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbldependientes
+    ADD CONSTRAINT tbldependientes_cliente_id_fkey FOREIGN KEY (cliente_id) REFERENCES tblclientes(codigo_id);
+
+
+--
+-- TOC entry 2712 (class 2606 OID 331381)
+-- Name: tbldependientes tbldependientes_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbldependientes
+    ADD CONSTRAINT tbldependientes_usuario_id_fkey FOREIGN KEY (usuario_id) REFERENCES tblusuarios(codigo_id);
+
+
+--
+-- TOC entry 2713 (class 2606 OID 331386)
+-- Name: tbldetalleasegurados tbldetalleasegurados_poliza_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbldetalleasegurados
+    ADD CONSTRAINT tbldetalleasegurados_poliza_id_fkey FOREIGN KEY (poliza_id) REFERENCES tblpolizas(codigo_id);
+
+
+--
+-- TOC entry 2714 (class 2606 OID 331391)
+-- Name: tblempleados tblempleados_cargo_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblempleados
+    ADD CONSTRAINT tblempleados_cargo_id_fkey FOREIGN KEY (cargo_id) REFERENCES prmcargos(codigo_id);
+
+
+--
+-- TOC entry 2715 (class 2606 OID 331396)
+-- Name: tblempleados tblempleados_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblempleados
+    ADD CONSTRAINT tblempleados_usuario_id_fkey FOREIGN KEY (usuario_id) REFERENCES tblusuarios(codigo_id);
+
+
+--
+-- TOC entry 2716 (class 2606 OID 331401)
+-- Name: tblpermisos tblpermisos_rol_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblpermisos
+    ADD CONSTRAINT tblpermisos_rol_id_fkey FOREIGN KEY (rol_id) REFERENCES tblroles(codigo_id);
+
+
+--
+-- TOC entry 2717 (class 2606 OID 331406)
+-- Name: tblpermisos tblpermisos_sitio_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblpermisos
+    ADD CONSTRAINT tblpermisos_sitio_id_fkey FOREIGN KEY (sitio_id) REFERENCES tblsitios(codigo_id);
+
+
+--
+-- TOC entry 2718 (class 2606 OID 331411)
+-- Name: tblplanespagos tblplanespagos_poliza_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblplanespagos
+    ADD CONSTRAINT tblplanespagos_poliza_id_fkey FOREIGN KEY (poliza_id) REFERENCES tblpolizas(codigo_id);
+
+
+--
+-- TOC entry 2719 (class 2606 OID 331416)
+-- Name: tblpolizas tblpolizas_cliente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblpolizas
+    ADD CONSTRAINT tblpolizas_cliente_id_fkey FOREIGN KEY (cliente_id) REFERENCES tblclientes(codigo_id);
+
+
+--
+-- TOC entry 2720 (class 2606 OID 331421)
+-- Name: tblpolizas tblpolizas_polizapadre_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblpolizas
+    ADD CONSTRAINT tblpolizas_polizapadre_id_fkey FOREIGN KEY (polizapadre_id) REFERENCES tblpolizas(codigo_id);
+
+
+--
+-- TOC entry 2721 (class 2606 OID 331426)
+-- Name: tblpolizas tblpolizas_servicio_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblpolizas
+    ADD CONSTRAINT tblpolizas_servicio_id_fkey FOREIGN KEY (servicio_id) REFERENCES tblservicios(codigo_id);
+
+
+--
+-- TOC entry 2722 (class 2606 OID 331431)
+-- Name: tblreclamos tblreclamos_cliente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblreclamos
+    ADD CONSTRAINT tblreclamos_cliente_id_fkey FOREIGN KEY (cliente_id) REFERENCES tblclientes(codigo_id);
+
+
+--
+-- TOC entry 2723 (class 2606 OID 331436)
+-- Name: tblreferencias tblreferencias_cliente_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblreferencias
+    ADD CONSTRAINT tblreferencias_cliente_id_fkey FOREIGN KEY (cliente_id) REFERENCES tblclientes(codigo_id);
+
+
+--
+-- TOC entry 2724 (class 2606 OID 331441)
+-- Name: tblreferencias tblreferencias_referencias_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblreferencias
+    ADD CONSTRAINT tblreferencias_referencias_id_fkey FOREIGN KEY (referencias_id) REFERENCES prmtiporeferencias(codigo_id);
+
+
+--
+-- TOC entry 2725 (class 2606 OID 331446)
+-- Name: tblreferencias tblreferencias_usuario_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblreferencias
+    ADD CONSTRAINT tblreferencias_usuario_id_fkey FOREIGN KEY (usuario_id) REFERENCES tblusuarios(codigo_id);
+
+
+--
+-- TOC entry 2738 (class 2606 OID 331451)
+-- Name: tblrenovaciones tblrenovaciones_poliza_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblrenovaciones
+    ADD CONSTRAINT tblrenovaciones_poliza_id_fkey FOREIGN KEY (poliza_id) REFERENCES tblpolizas(codigo_id);
+
+
+--
+-- TOC entry 2726 (class 2606 OID 331456)
+-- Name: tblseguimientos tblseguimientos_asistencia_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblseguimientos
+    ADD CONSTRAINT tblseguimientos_asistencia_id_fkey FOREIGN KEY (asistencia_id) REFERENCES tblasistencias(codigo_id);
+
+
+--
+-- TOC entry 2729 (class 2606 OID 331461)
+-- Name: tblservicios tblservicios_categoria_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblservicios
+    ADD CONSTRAINT tblservicios_categoria_id_fkey FOREIGN KEY (categoria_id) REFERENCES prmcategorias(codigo_id);
+
+
+--
+-- TOC entry 2730 (class 2606 OID 331466)
+-- Name: tblservicios tblservicios_cuenta_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblservicios
+    ADD CONSTRAINT tblservicios_cuenta_id_fkey FOREIGN KEY (ctacontado_id) REFERENCES tblcuentas(codigo_id);
+
+
+--
+-- TOC entry 2731 (class 2606 OID 331471)
+-- Name: tblservicios tblservicios_proveedor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblservicios
+    ADD CONSTRAINT tblservicios_proveedor_id_fkey FOREIGN KEY (proveedor_id) REFERENCES tblproveedores(codigo_id);
+
+
+--
+-- TOC entry 2732 (class 2606 OID 331476)
+-- Name: tbltasacambios tbltasacambios_smoneda_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbltasacambios
+    ADD CONSTRAINT tbltasacambios_smoneda_id_fkey FOREIGN KEY (smoneda_id) REFERENCES tblmonedas(smoneda_id);
+
+
+--
+-- TOC entry 2733 (class 2606 OID 331481)
+-- Name: tbltomador tbltomador_actividad_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbltomador
+    ADD CONSTRAINT tbltomador_actividad_id_fkey FOREIGN KEY (actividad_id) REFERENCES prmacteconomicas(codigo_id);
+
+
+--
+-- TOC entry 2734 (class 2606 OID 331486)
+-- Name: tbltomador tbltomador_nacionalidad_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbltomador
+    ADD CONSTRAINT tbltomador_nacionalidad_id_fkey FOREIGN KEY (nacionalidad_id) REFERENCES prmpaises(codigo_id);
+
+
+--
+-- TOC entry 2735 (class 2606 OID 331491)
+-- Name: tbltransacciones tbltransacciones_comprobante_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbltransacciones
+    ADD CONSTRAINT tbltransacciones_comprobante_id_fkey FOREIGN KEY (comprobante_id) REFERENCES tblcomprobantes(codigo_id);
+
+
+--
+-- TOC entry 2736 (class 2606 OID 331496)
+-- Name: tbltransacciones tbltransacciones_cuenta_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tbltransacciones
+    ADD CONSTRAINT tbltransacciones_cuenta_id_fkey FOREIGN KEY (cuenta_id) REFERENCES tblcuentas(codigo_id);
+
+
+--
+-- TOC entry 2737 (class 2606 OID 331501)
+-- Name: tblusuarios tblusuarios_rol_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sdaguirre
+--
+
+ALTER TABLE ONLY tblusuarios
+    ADD CONSTRAINT tblusuarios_rol_id_fkey FOREIGN KEY (rol_id) REFERENCES tblroles(codigo_id);
+
+
+-- Completed on 2017-03-29 20:06:25

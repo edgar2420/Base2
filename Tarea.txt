@@ -1,0 +1,24 @@
+   
+ 
+ 
+
+ELECT to_char(c.dtfecha, 'dd/MM/YY'), c2.snombre as clinica, concat(d.snombre, '
+p.snombre ||' '|| p.sapellido as paciente
+
+O AENA
+
+JOIN clinicas c2 ON c2.codigo_id =c.clinica_id
+
+join personas d on c.doctor_id = d.codigo_id
+
+join personas p on c.paciente_id =p.codigo_id order by c.dtfecha asc;
+
+   
+ 
+ 
+
+*,d.sapellido) as
+
+ 
+   
+

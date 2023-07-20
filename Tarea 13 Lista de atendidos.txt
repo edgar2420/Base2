@@ -1,0 +1,10 @@
+---Tarea 13 Lista de atendidos
+---Realizar una consulta utilizando CTE que indique la cantidad 
+---total de consultas que realizó un doctor en una clinica en particular, 
+---indicando el nombre de la clinica, nombre completo del doctor y el total de pacientes atendidos,
+--se debe incluir en el informe aquellos doctores registrados que no realizaron ninguna consulta.
+select F.snombre as Clinica,concat(Q.snombre,' ',Q.sapellido) as Nombre,count(D.codigo_id)as Pacientes_atendidos
+from doctores D left join consultas S on D.codigo_id = S.doctor_id
+left join clinicas F on F.codigo_id = S.clinica_id 
+join personas Q on Q.codigo_id = D.codigo_id group by F.snombre,Q.snombre,Q.sapellido
+order by 3 desc

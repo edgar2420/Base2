@@ -1,0 +1,258 @@
+CREATE TABLE prmsistema
+(
+    codigo_id integer NOT NULL ,
+    idlabel text NOT NULL,
+    svalue text NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp ,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    CONSTRAINT prmsistema_pkey PRIMARY KEY (codigo_id)
+)
+CREATE TABLE prmtipozonas
+(
+    codigo_id integer NOT NULL ,
+    stipo text NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    CONSTRAINT prmtipozonas_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT prmtipozonas_stipo_key UNIQUE (stipo)
+)
+CREATE TABLE prmzonas
+(
+    codigo_id integer NOT NULL,
+    subicacion text NOT NULL,
+    idm text,
+    iuv text,
+    imzo text,
+    tipozona_id integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp ,
+    dcmodified timestamp ,
+    access_id integer NOT NULL,
+    sdetalle text,
+    CONSTRAINT prmzonas_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT prmzonas_tipozona_id_fkey FOREIGN KEY (tipozona_id)
+        REFERENCES prmtipozonas (codigo_id)
+)
+
+CREATE TABLE state
+(
+    count bigint
+)
+
+CREATE TABLE tbldetalletrabajos
+(
+    codigo_id bigint NOT NULL,
+    trabajo_id integer NOT NULL,
+    campo_id integer NOT NULL,
+    svalor text,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    CONSTRAINT tbldetalletrabajos_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT tbldetalletrabajos_campo_id_fkey FOREIGN KEY (campo_id)
+        REFERENCES tblformularios (codigo_id),
+    CONSTRAINT tbldetalletrabajos_trabajo_id_fkey FOREIGN KEY (trabajo_id)
+        REFERENCES tbltrabajos (codigo_id) 
+)
+
+CREATE TABLE tblempleados
+(
+    codigo_id integer NOT NULL,
+    snombre text,
+    sci character varying(10),
+    stelefono character varying(10),
+    sdireccion text,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    CONSTRAINT tblempleados_pkey PRIMARY KEY (codigo_id)
+)
+
+CREATE TABLE tblequipos
+(
+    codigo_id integer NOT NULL,
+    snombre text,
+    responsable_id integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    CONSTRAINT tblequipos_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT tblequipos_snombre_key UNIQUE (snombre),
+    CONSTRAINT tblequipos_responsable_id_fkey FOREIGN KEY (responsable_id)
+        REFERENCES tblempleados (codigo_id)
+)
+
+CREATE TABLE tblequipos_integrantes
+(
+    codigo_id integer NOT NULL,
+    equipo_id integer NOT NULL,
+    integrante_id integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    CONSTRAINT tblequipos_integrantes_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT tblequipos_integrantes_integrante_id_fkey FOREIGN KEY (integrante_id)
+        REFERENCES tblempleados (codigo_id)
+)
+
+CREATE TABLE tblformularios
+(
+    codigo_id integer NOT NULL,
+    servicio_id integer NOT NULL,
+    scampo text ,
+    itipo_fl integer NOT NULL,
+    ipeso integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    CONSTRAINT tblformularios_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT tblformularios_scampo_key UNIQUE (scampo),
+    CONSTRAINT tblformularios_servicio_id_fkey FOREIGN KEY (servicio_id)
+        REFERENCES tblservicios (codigo_id) 
+)
+
+CREATE TABLE tblhorarios
+(
+    codigo_id integer NOT NULL,
+    zona_id integer NOT NULL,
+    servicio_id integer NOT NULL,
+    usuario_id integer NOT NULL,
+    dtfecha_ini date,
+    dtfecha_fin date,
+    blunes boolean,
+    bmartes boolean,
+    bmiercoles boolean,
+    bjueves boolean,
+    bviernes boolean,
+    bsabado boolean,
+    bdomingo boolean,
+    iestado_fl integer,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    sdestino_fl text,
+    CONSTRAINT tblhorarios_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT tblhorarios_servicio_id_fkey FOREIGN KEY (servicio_id)
+        REFERENCES tblservicios (codigo_id),
+    CONSTRAINT tblhorarios_usuario_id_fkey FOREIGN KEY (usuario_id)
+        REFERENCES tblusuarios (codigo_id),
+    CONSTRAINT tblhorarios_zona_id_fkey FOREIGN KEY (zona_id)
+        REFERENCES prmzonas (codigo_id)
+)
+
+CREATE TABLE tblpermisos
+(
+    codigo_id bigint NOT NULL,
+    rol_id integer,
+    sitio_id integer,
+    bselect boolean,
+    binsert boolean,
+    bupdate boolean,
+    bdelete boolean,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    CONSTRAINT tblpermisos_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT tblpermisos_rol_id_fkey FOREIGN KEY (rol_id)
+        REFERENCES tblroles (codigo_id),
+    CONSTRAINT tblpermisos_sitio_id_fkey FOREIGN KEY (sitio_id)
+        REFERENCES tblsitios (codigo_id)
+)
+
+CREATE TABLE tblroles
+(
+    codigo_id integer NOT NULL ,
+    snombre text NOT NULL,
+    iestado_fl integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    CONSTRAINT tblroles_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT tblroles_snombre_key UNIQUE (snombre)
+)
+
+CREATE TABLE tblservicios
+(
+    codigo_id integer NOT NULL ,
+    snombre text,
+    tipozona_id integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    CONSTRAINT tblservicios_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT tblservicios_snombre_key UNIQUE (snombre),
+    CONSTRAINT tblservicios_tipozona_id_fkey FOREIGN KEY (tipozona_id)
+        REFERENCES prmtipozonas (codigo_id)
+)
+
+CREATE TABLE tblsitios
+(
+    codigo_id integer NOT NULL,
+    ssitio_nm text,
+    CONSTRAINT tblsitios_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT tblsitios_ssitio_nm_key UNIQUE (ssitio_nm)
+)
+CREATE TABLE tbltrabajos
+(
+    codigo_id integer NOT NULL,
+    horario_id integer NOT NULL,
+    dtfecha timestamp NOT NULL,
+    gpsx double precision,
+    gpsy double precision,
+    iestado_fl integer,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    CONSTRAINT tbltrabajos_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT tbltrabajos_horario_id_fkey FOREIGN KEY (horario_id)
+        REFERENCES tblhorarios (codigo_id)
+)
+
+CREATE TABLE tblusuarios
+(
+    codigo_id integer NOT NULL,
+    empleado_id integer NOT NULL,
+    rol_id integer NOT NULL,
+    scuenta text,
+    spassword text NOT NULL,
+    scorreo text,
+    iestado_fl integer NOT NULL,
+    iconcurrencia_id integer NOT NULL,
+    bdeleted boolean NOT NULL,
+    dtcreated timestamp,
+    dcmodified timestamp,
+    access_id integer NOT NULL,
+    CONSTRAINT tblusuarios_pkey PRIMARY KEY (codigo_id),
+    CONSTRAINT tblusuarios_scuenta_key UNIQUE (scuenta),
+    CONSTRAINT tblusuarios_empleado_id_fkey FOREIGN KEY (empleado_id)
+        REFERENCES tblempleados (codigo_id),
+    CONSTRAINT tblusuarios_rol_id_fkey FOREIGN KEY (rol_id)
+        REFERENCES tblroles (codigo_id)
+)

@@ -1,0 +1,37 @@
+CREATE OR REPLACE FUNCTION ins_doctor(
+	p_codigo_id text,
+	p_nombre text,
+	p_apellido text,
+	p_telefono text,
+	p_direccion text,
+	p_especialidad text,
+	p_gsangre text,
+	p_salario numeric(15,2)
+	) RETURNS void AS
+$BODY$
+BEGIN
+	IF p_especialidad is not null then
+		IF NOT EXISTS(SELECT * FROM personas WHERE codigo_id = p_codigo_id) THEN 
+			INSERT INTO personas VALUES (p_codigo_id, p_nombre, p_apellido, p_telefono,
+			p_direccion,current_timestamp);
+			INSERT INTO doctores VALUES (p_codigo_id, p_especialidad, p_salario, true);
+		ELSE 
+			UPDATE personas SET snombre = p_nombre, sapellido = p_apellido, stelefono = p_telefono,
+			sdireccion = p_direccion,fecha_nacim = current_timestamp WHERE codigo_id = p_codigo_id;
+			UPDATE doctores SET sespecialidad = p_especialidad, nsalario = p_salario, bactivo = 'true'  WHERE codigo_id = p_codigo_id;
+		END IF;
+	
+	ELSE 	
+		IF NOT EXISTS(SELECT * FROM personas WHERE codigo_id = p_codigo_id) THEN
+			INSERT INTO personas VALUES (p_codigo_id, p_nombre, p_apellido, p_telefono,
+			p_direccion,current_timestamp);
+			INSERT INTO pacientes VALUES (p_codigo_id,p_gsangre);
+		ELSE
+			UPDATE personas SET snombre = p_nombre, sapellido = p_apellido, stelefono = p_telefono,
+			sdireccion = p_direccion, fnacimiento = current_timestamp WHERE codigo_id = p_codigo_id;
+			UPDATE cliniaa.pacientes SET gsangre = p_gsangre WHERE codigo_id = p_codigo_id;
+		END IF;
+	END IF;
+END;
+$BODY$
+LANGUAGE plpgsql;
