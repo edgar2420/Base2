@@ -1,0 +1,35 @@
+Crear un trigger que valide y corrija los campos de nombre, apellido y telefono de la tabla "Personas" en la base de datos "Clinica", deberá contar con las siguientes condiciones:
+
+Los campos de nombre y apellido deben contener solamente letras
+El campo de telefono no puede tener letras o símbolos, el único símbolo permitido es el guion
+CREATE OR REPLACE FUNCTION validar_persona()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF NEW.snombre ~'[^a-zA-Z\x20]' then 
+		raise notice 'Nombre ingresado Correcto';
+	ELSE 
+		raise exception 'Solamente introducir Letras';
+	END IF;	
+	IF NEW.sapellido ~'[^a-zA-Z\x20]' then 
+		raise notice 'apellido ingresado Correcto';
+	ELSE 
+		raise exception 'Solamente introducir Letras';
+	END IF;	
+	IF NEW.stelefono ~'\(\d{3,4}\) \d{8}\' then
+		raise notice 'El telefono ingresado es correcto';
+	ELSE
+		raise exception 'No se puede introducir letras en el telefono';
+	END IF;
+RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+select * from personas 
+insert into personas values ('554','42test','42test','1234','barrio',null);
+
+CREATE TRIGGER valida_persona
+ after INSERT or update ON personas
+ FOR EACH ROW
+ EXECUTE PROCEDURE validar_persona();

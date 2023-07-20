@@ -1,0 +1,49 @@
+--1
+CREATE OR REPLACE FUNCTION asignar_numero_boleta()
+RETURNS TRIGGER AS
+$$
+	BEGIN
+        IF TG_OP = 'INSERT' THEN
+            IF NEW.boleta = 'NOTA DE CBRANZA' THEN
+                NEW.nro_boleta = (SELECT MAX(nro_boleta) FROM contable_gastos WHERE nro_boleta = 'NOTA DE COBRANZA') + 1;
+            ELSIF NEW.boleta = 'FACTURA' THEN
+                NEW.nro_boleta = (SELECT MAX(nro_boleta) FROM contable_gastos WHERE nro_boleta = 'FACTURA') + 1;
+            ELSIF NEW.boleta = 'PLANTILLA' THEN
+                NEW.nro_boleta = (SELECT MAX(nro_boleta) FROM contable_gastos WHERE nro_boleta = 'PLANTILLA') + 1;
+            END IF;
+        END IF;
+        RETURN NEW;
+    END;
+
+ --2
+CREATE OR REPLACE FUNCTION eliminar_registro()
+RETURNS TRIGGER AS
+$$
+    BEGIN
+        DELETE FROM contable_solicitudpago WHERE id = OLD.id;
+        RETURN NULL;
+    END;
+$$
+LANGUAGE plpgsql;
+--3
+CREATE OR REPLACE FUNCTION actualizar_saldo()
+RETURNS TRIGGER AS
+$$
+    BEGIN
+        IF TG_OP = 'INSERT' THEN
+            UPDATE contable_solicitudpago SET saldo = saldo - NEW.valor WHERE id = NEW.id;
+        ELSIF TG_OP = 'DELETE' THEN
+            UPDATE contable_solicitudpago SET saldo = saldo + OLD.valor WHERE id = OLD.id;
+        END IF;
+        RETURN NULL;
+    END;
+$$
+LANGUAGE plpgsql;
+--4
+SELECT AVG(fecha - tipo_solicitud) FROM contable_solicitudpago;
+--5
+CREATE OR REPLACE VIEW gastos_desglosados AS
+SELECT contable_solicitudpago.id, contable_solicitudpago.tipo_solicitud, contable_solicitudpago.fecha, contable_gastos.importe, contable_gasto.tipo_estado, contable_gastos.valor, contable_gastos.tramite_id FROM contable_solicitudpago INNER JOIN contable_gastos ON contable_solicitudpago.id = contable_gastos.id;
+
+
+

@@ -1,0 +1,31 @@
+--Desarrollar un trigger en la tabla trabajos de la base de datos empresa, 
+--que cumpla la funcionalidad al de verificar que un empleado no pueda trabajar mas de 50 horas 
+--en total de todos sus proyectos asignados, esta validación deberá funcionar al 
+--momento de ingresar un nuevo trabajo o actualizar uno existente
+
+ALTER TABLE trabajos
+ADD CONSTRAINT check_trabajos CHECK (horas > 1 AND horas < 50);
+
+CREATE OR REPLACE FUNCTION check_trabajos()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		ALTER TABLE trabajos ADD CONSTRAINT check_trabajos CHECK (horas > 1 AND horas =< 50);
+	ELSIF TG_OP = 'UPDATE' THEN
+		ALTER TABLE trabajos ADD CONSTRAINT check_trabajos CHECK (horas > 1 AND horas =< 50);
+	END IF;
+  RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER cck_trabajos
+AFTER INSERT OR UPDATE ON empleados
+FOR EACH ROW
+EXECUTE PROCEDURE check_trabajos();
+
+select * from trabajos
+insert into trabajos values (1,1,49);
+update trabajos set horas = 48
+  where empleado_id = 1;

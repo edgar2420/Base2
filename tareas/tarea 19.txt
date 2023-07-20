@@ -1,0 +1,29 @@
+CREATE OR REPLACE FUNCTION fun_registro_consulta(
+	paciente_nombre text,
+	doctor_nombre text,
+	clinica_nombre text)
+	RETURNS void as
+$BODY$
+DECLARE
+	cod_Paci int;
+	cod_Doc text;
+	cod_Clinica int;
+BEGIN
+
+select concat(F.snombre,' ',F.sapellido) from doctores D join Personas F on D.codigo_id = F.codigo_id ; 
+	select codigo_id into cod_Paci from personas where concat(snombre,' ',sapellido) = paciente_nombre;
+	select codigo_id into cod_Doc from doctores where  = doctor_nombre;
+	select codigo_id into cod_Clinica from clinicas where snombre = clinica_id;
+	
+	IF NOT EXISTS(SELECT * FROM personas WHERE codigo_id = cod_Paci) THEN
+		insert into consultas values(51,cod_Doc,cod_Paci,now()::date);
+	ELSE
+		
+	END IF;
+	
+
+	insert into consultas values(,cod_Doc,cod_Paci,now()::date);
+	select * from consultas
+END
+$BODY$
+LANGUAGE plpgsql;

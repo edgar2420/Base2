@@ -1,0 +1,68 @@
+---para cambiar los datos con la tarea codificador
+
+alter table empleados
+drop constraint empleados_supervisor_id_fkey;
+
+
+
+alter table empleados
+alter column supervisor_id type text;
+
+
+
+alter table familiares
+drop constraint familiares_empleado_id_fkey;
+
+
+
+alter table familiares
+alter column empleado_id type text;
+
+
+
+alter table trabajos
+drop constraint trabajos_empleado_id_fkey;
+
+
+
+alter table trabajos
+alter column empleado_id type text;
+
+
+
+alter table departamentos
+drop constraint departamentos_admin_id_fkey;
+
+
+
+alter table departamentos
+alter column admin_id type text;
+
+
+
+alter table empleados
+alter column ci_id type text;
+
+
+
+alter table empleados
+add foreign key (supervisor_id) references empleados(ci_id) on update cascade;
+
+
+
+alter table familiares
+add foreign key (empleado_id) references empleados(ci_id) on update cascade on delete cascade;
+
+
+
+alter table trabajos
+add foreign key (empleado_id) references empleados(ci_id) on update cascade on delete cascade;
+
+
+
+alter table departamentos
+add foreign key (admin_id) references empleados(ci_id) on update cascade on delete set null;
+
+
+
+select * from empleados;

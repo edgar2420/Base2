@@ -1,0 +1,23 @@
+CREAR TRES BASES DE DATOS CON LA ESTRUCTURA DE EMPRESA, Y EJECUTAR O ADICIONAR LOS DATOS EN LOS ARCHIVOS SQL QUE SE ENCUENTRAN ANEXOS A CONTINUACIÓN.
+SI EL SCRIPT PRESENTA ALGUN PROBLEMA DE EJECUCIÓN, SE DEBE CORREGIR SEGUN LA RESPUESTA DEL DBMS.
+UNA VEZ PREPARADO EL ENTORNO CON LAS TRES BASES DE DATOS -TANTO EN DATOS COMO CONECTIVIDAD- REALIZAR LAS SIGUIENTES OPERACIONES.
+
+1. REALIZAR UNA CONSULTA QUE OBTENGA EL TOTAL DE EMPLEADOS POR BASE DE DATOS CON EL SIGUIENTE FORMATO
+
+    +------------+----------------------------+
+    |    DBMS    |       TOTAL EMPLEADOS      |
+    +------------+----------------------------+
+    | SERVER A(1)|              13            |
+    +------------+----------------------------+
+    | SERVER B(2)|              22            |
+    +------------+----------------------------+
+    | SERVER C(3)|              16            |
+    +------------+----------------------------+
+
+
+
+select 'Server A(1)' as DBMS, count(ci_id) from empleados
+Union
+select 'Server B(2)', count (ci_id) from remotoa.empleados
+Union
+select 'Server C(3)', count (ci_id) from remotob.empleados order by DBMS asc

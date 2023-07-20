@@ -1,0 +1,81 @@
+1) Se desea desarrollar un Trigger que al momento de registrar una póliza en la base de datos FINAL
+se conecte a la base de datos de la UIF y verifique en las listas PEP la existencia del cliente, en caso
+de encontrarse el cliente en la lista, el Trigger debe devolver un error o advertencia al momento de
+registrar indicando que ese cliente se encuentra en las listas y está en observación. Considerar que
+las personas registradas pueden variar su NIT o su nombre, pero no ambas
+---------------------------------------------------------------------------------------
+CREATE EXTENSION postgres_fdw;
+
+CREATE SERVER svr_remoto_final
+foreign data wrapper postgres_fdw
+options (host '127.0.0.1', port '5432', dbname 'UIF');
+
+
+create user mapping for postgres
+server svr_remoto_final options(user 'postgres', password 'root');
+
+import foreign schema public
+from server svr_remoto_final into pep;
+
+CREATE OR REPLACE FUNCTION vfy_pep()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+	 IF EXISTS(select * from tblclientes A
+				inner join pep.tblclientes B 
+			   		ON  A.snit = B.snit OR A.snombre = B.snombre) THEN
+			RAISE EXCEPTION 'No se pudo';
+
+	END IF;
+END IF;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+CREATE TRIGGER vfy_uif
+ AFTER INSERT ON tblpolizas
+ FOR EACH ROW
+ EXECUTE PROCEDURE vfy_pep();
+
+---------------------------------------------
+2) La UIF requiere un acceso a nuestra base de datos, pero debe ser limitada solamente a revisar la
+información básica de los clientes y las pólizas emitidas a dichos clientes, sin poder realizar ninguna
+otra operación en la base de datos.
+
+CREATE USER user_final PASSWORD 'pass';
+GRANT SELECT ON tblclientes  TO user_final;
+GRANT SELECT ON tblpolizas TO user_final;
+
+-------------------------------------------------
+3) Crear un Trigger que almacene la fecha, hora y usuario que haya realizado un cambio de
+contraseña en la tabla usuarios dentro en una tabla de histórico o log(fecha, hora, usuario,
+operación)
+--------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION log_password()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF TG_OP = 'UPDATE' THEN
+		INSERT INTO pass_logs VALUES(DEFAULT,current_timestamp,NEW.codigo_id,NEW.scuenta,TG_OP);
+	END IF;
+  RETURN OLD;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+ CREATE TRIGGER logs_pass
+ AFTER INSERT OR UPDATE ON tblusuarios
+ FOR EACH ROW
+ EXECUTE PROCEDURE log_password();
+--------------------------------------------------------------------
+4) Utilizar la base de datos "LOCK" y una función "vfy_usuario(cuenta text, passw text)" que debe
+retornar como resultado una tabla con los permisos de acceso asignados a ese usuario
+
+
+select D.codigo_id as usuario,A.codigo_id as interfaz, B.sdescripcion as permisos from tblinterfaces A
+join tblpermisos B on A.codigo_id = B.interfaz_id
+join tblroles C on  B.rol_id = C.codigo_id
+join tblusuarios D on C.codigo_id = D.rol_id

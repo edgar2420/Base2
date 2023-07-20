@@ -1,0 +1,62 @@
+--Asignar automáticamente el numero de boleta de manera correlativa según el tipo de boleta (planilla, nota cobranza, factura)
+CREATE OR REPLACE FUNCTION asignar_numero_boleta()
+RETURNS TRIGGER AS
+$$
+	BEGIN
+		IF TG_OP = 'INSERT' THEN
+			IF NEW.tipo_boleta = 'Planilla' THEN
+				NEW.numero_boleta = (SELECT MAX(nro_boleta) FROM contable_gastos WHERE nro_boleta = 'Planilla') + 1;
+			ELSIF NEW.tipo_boleta = 'Nota de cobranza' THEN
+				NEW.numero_boleta = (SELECT MAX(nro_boleta) FROM contable_gastos WHERE nro_boleta = 'Nota de cobranza') + 1;
+			ELSIF NEW.tipo_boleta = 'Factura' THEN
+				NEW.numero_boleta = (SELECT MAX(nro_boleta) FROM contable_gastos WHERE nro_boleta = 'Factura') + 1;
+			END IF;
+		END IF;
+		RETURN NEW;
+	END;
+$$
+LANGUAGE plpgsql;
+
+--Eliminar la posibilidad de “eliminar registros”, solamente pueden darse de baja o ser anulados los registros por medio del “estado” (borrado lógico)
+CREATE OR REPLACE FUNCTION eliminar_registro()
+RETURNS TRIGGER AS
+$$
+	BEGIN
+		IF TG_OP = 'DELETE' THEN
+			RAISE EXCEPTION 'No se puede eliminar el registro';
+		END IF;
+		RETURN OLD;
+	END;
+$$
+LANGUAGE plpgsql;
+--Adicionar la funcionalidad del registro automático en la tabla de gastos una vez la solicitud pasa a ser aprobada
+RETURNS TRIGGER AS
+$$
+	BEGIN
+		IF TG_OP = 'UPDATE' THEN
+			IF NEW.estado = 'Aprobado' THEN
+				INSERT INTO contable_solicitudpago VALUES(DEFAULT, NEW.create_at, NEW.update_at, NEW.tipo_gasto, NEW.total_gasto, NEW.total_pago_id, NEW.tramite_id, NEW.detalle, NEW.nro_boleta, NEW.estado);
+			END IF;
+		END IF;
+		RETURN NEW;
+	END;
+$$
+LANGUAGE plpgsql;
+
+--En base a los registros existentes, indicar cuanto es el tiempo promedió que hay entre el registro de una solicitud y su gasto asociado
+SELECT AVG(fecha - tipo_solicitud) FROM contable_solicitudpago;
+
+-- Contar con una vista que indique los gastos desglosados de cada trámite de manera horizontal
+CREATE OR REPLACE VIEW vw_gastos_tramite AS
+SELECT
+	(SELECT COUNT(*) FROM contable_gastos WHERE tipo_gasto = 'TRAMITE') AS contable_gastos,
+	(SELECT COUNT(*) FROM contable_gastos WHERE tipo_gasto = 'ALBO PAMPA') AS contable_gastos,
+	(SELECT COUNT(*) FROM contable_gastos WHERE tipo_gasto = 'ALBO TAMBO QUEMADO') AS contable_gastos,
+	(SELECT COUNT(*) FROM contable_gastos WHERE tipo_gasto = 'ALBO WARNES') AS contable_gastos,
+	(SELECT COUNT(*) FROM contable_gastos WHERE tipo_gasto = 'DAB ALBO WARNES') AS contable_gastos,
+	(SELECT COUNT(*) FROM contable_gastos WHERE tipo_gasto = 'PAGO DE TRIBUTOS') AS contable_gastos,
+	(SELECT COUNT(*) FROM contable_gastos WHERE tipo_gasto = 'REEMBOLSO GATOS DESPACHO') AS contable_gastos,
+	(SELECT COUNT(*) FROM contable_gastos WHERE tipo_gasto = 'SENASAG') AS contable_gastos,
+	(SELECT COUNT(*) FROM contable_gastos WHERE tipo_gasto = 'SERVICIODAM') AS contable_gastos,
+	(SELECT COUNT(*) FROM contable_gastos WHERE tipo_gasto = 'SERVICIO RESGUARDADO') AS contable_gastos
+FROM contable_gastos;
